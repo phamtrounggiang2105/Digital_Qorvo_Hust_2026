@@ -1,9 +1,17 @@
 `timescale 1ns / 1ps
 module tb_clock_divider();
     reg  clk;
-    reg  rstn_sync;
+    reg  rstn;
     wire pulse_1ms;
     wire pulse_1s;
+
+    wire rstn_sync;
+
+    reset_sync u_reset_sync(
+        .clk(clk),
+        .rstn(rstn),
+        .rstn_sync(rstn_sync)
+    );
 
     clock_divider dut (
         .clk(clk),
@@ -25,12 +33,14 @@ module tb_clock_divider();
     end
 
     initial begin
-        rstn_sync = 0;
+        rstn = 0;
         ms_pulse_cnt = 0;
 
         $display(" --- START --- ");
         
-        #1500 rstn_sync = 1;
+        #1500 rstn = 1;
+        @(posedge rstn_sync);
+        #5;
 
         // TESTCASE 1: Kiểm tra khoảng cách giữa 2 xung pulse_1ms
         @(posedge pulse_1ms); 

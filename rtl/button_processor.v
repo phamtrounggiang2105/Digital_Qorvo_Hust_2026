@@ -2,7 +2,6 @@
 // Verison 07//10/26
 // =========================================================================
  
- 
 module button_processor (
     input wire clk,
     input wire rstn_sync,

@@ -98,7 +98,7 @@ module control_fsm (
             
             SET_S: begin
                 if (timeout) begin      
-                    state_next = NORMAL;
+                    next_state = NORMAL;
                 end else if (sel_tick) begin
                     next_state = NORMAL;
                 end else begin
