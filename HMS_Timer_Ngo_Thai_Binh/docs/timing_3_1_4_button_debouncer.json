@@ -1,0 +1,15 @@
+{
+  "signal": [
+    {"name": "clk (1MHz)", "wave": "p..................."},
+    {"name": "clk_gated (1kHz)", "wave": "01010101010101010101"},
+    {"name": "btn_in (async)", "wave": "0.10.1.............."},
+    {"name": "r_sync_1", "wave": "0..10..1............"},
+    {"name": "r_sync_2", "wave": "0...10..1..........."},
+    {"name": "r_counter[4:0]", "wave": "=...=..======...====", "data": ["0", "0", "0", "1", "2", "...", "18", "0", "1", "18"]},
+    {"name": "btn_pulse (1-cycle)", "wave": "0.............10...10"}
+  ],
+  "head": {
+    "text": "button_debouncer Timing: Glitch Filtering (<18ms) and Valid 1-Cycle Pulse Output",
+    "tick": 0
+  }
+}

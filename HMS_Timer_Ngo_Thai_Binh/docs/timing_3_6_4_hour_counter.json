@@ -1,0 +1,14 @@
+{
+  "signal": [
+    {"name": "clk (1MHz)", "wave": "p..................."},
+    {"name": "min_rollover", "wave": "0.10......10...0...."},
+    {"name": "load_en", "wave": "0...........0..10..."},
+    {"name": "adj_hour[4:0]", "wave": "=..............=....", "data": ["5'd0", "5'd08"]},
+    {"name": "r_hour[4:0]", "wave": "=..=.......=....=...", "data": ["5'd22", "5'd23", "5'd00", "5'd08"]},
+    {"name": "en_hour (ICG)", "wave": "0.10......10...10..."}
+  ],
+  "head": {
+    "text": "hour_counter Timing: Cascade Incrementation, Midnight Wrap (23 -> 00), and Synchronous Parallel Load",
+    "tick": 0
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "signal": [
+    {"name": "clk (1MHz)", "wave": "p..................."},
+    {"name": "sec_rollover", "wave": "0.10......10...0...."},
+    {"name": "load_en", "wave": "0...........0..10..."},
+    {"name": "adj_min[5:0]", "wave": "=..............=....", "data": ["6'd0", "6'd15"]},
+    {"name": "r_min[5:0]", "wave": "=..=.......=....=...", "data": ["6'd58", "6'd59", "6'd00", "6'd15"]},
+    {"name": "min_rollover", "wave": "0..........10..0...."},
+    {"name": "en_min (ICG)", "wave": "0.10......10...10..."}
+  ],
+  "head": {
+    "text": "minute_counter Timing: Cascade Incrementation, min_rollover Generation, and Synchronous Parallel Load",
+    "tick": 0
+  }
+}

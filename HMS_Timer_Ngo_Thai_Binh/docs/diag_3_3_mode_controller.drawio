@@ -1,0 +1,235 @@
+<mxfile host="Electron">
+  <diagram name="Page-1" id="diag_mode_controller_bw">
+    <mxGraphModel dx="1000" dy="700" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="800" pageHeight="620" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <!-- CENTER MODULE BOX -->
+        <mxCell id="box_module" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;strokeWidth=2;fontFamily=Helvetica;fontSize=18;fontStyle=1;fontColor=#000000;align=center;verticalAlign=middle;" value="mode_controller" vertex="1">
+          <mxGeometry height="500" width="240" x="280" y="50" as="geometry" />
+        </mxCell>
+
+        <!-- INPUT ARROWS (LEFT TO RIGHT INTO BOX) -->
+        <!-- In 1: clk -->
+        <mxCell id="in_clk_lbl" parent="1" style="text;html=1;align=center;verticalAlign=bottom;fontSize=13;fontFamily=Helvetica;fontColor=#000000;" value="clk" vertex="1">
+          <mxGeometry height="20" width="130" x="140" y="50" as="geometry" />
+        </mxCell>
+        <mxCell id="in_clk_arr" parent="1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#000000;strokeWidth=1.5;endArrow=classic;endFill=1;" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="140" y="80" as="sourcePoint" />
+            <mxPoint x="280" y="80" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+
+        <!-- In 2: rstn -->
+        <mxCell id="in_rstn_lbl" parent="1" style="text;html=1;align=center;verticalAlign=bottom;fontSize=13;fontFamily=Helvetica;fontColor=#000000;" value="rstn" vertex="1">
+          <mxGeometry height="20" width="130" x="140" y="104" as="geometry" />
+        </mxCell>
+        <mxCell id="in_rstn_arr" parent="1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#000000;strokeWidth=1.5;endArrow=classic;endFill=1;" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="140" y="134" as="sourcePoint" />
+            <mxPoint x="280" y="134" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+
+        <!-- In 3: sel_pulse -->
+        <mxCell id="in_sel_lbl" parent="1" style="text;html=1;align=center;verticalAlign=bottom;fontSize=13;fontFamily=Helvetica;fontColor=#000000;" value="sel_pulse" vertex="1">
+          <mxGeometry height="20" width="130" x="140" y="158" as="geometry" />
+        </mxCell>
+        <mxCell id="in_sel_arr" parent="1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#000000;strokeWidth=1.5;endArrow=classic;endFill=1;" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="140" y="188" as="sourcePoint" />
+            <mxPoint x="280" y="188" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+
+        <!-- In 4: up_pulse -->
+        <mxCell id="in_up_lbl" parent="1" style="text;html=1;align=center;verticalAlign=bottom;fontSize=13;fontFamily=Helvetica;fontColor=#000000;" value="up_pulse" vertex="1">
+          <mxGeometry height="20" width="130" x="140" y="212" as="geometry" />
+        </mxCell>
+        <mxCell id="in_up_arr" parent="1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#000000;strokeWidth=1.5;endArrow=classic;endFill=1;" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="140" y="242" as="sourcePoint" />
+            <mxPoint x="280" y="242" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+
+        <!-- In 5: down_pulse -->
+        <mxCell id="in_down_lbl" parent="1" style="text;html=1;align=center;verticalAlign=bottom;fontSize=13;fontFamily=Helvetica;fontColor=#000000;" value="down_pulse" vertex="1">
+          <mxGeometry height="20" width="130" x="140" y="266" as="geometry" />
+        </mxCell>
+        <mxCell id="in_down_arr" parent="1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#000000;strokeWidth=1.5;endArrow=classic;endFill=1;" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="140" y="296" as="sourcePoint" />
+            <mxPoint x="280" y="296" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+
+        <!-- In 6: sec_tick -->
+        <mxCell id="in_tick_lbl" parent="1" style="text;html=1;align=center;verticalAlign=bottom;fontSize=13;fontFamily=Helvetica;fontColor=#000000;" value="sec_tick" vertex="1">
+          <mxGeometry height="20" width="130" x="140" y="320" as="geometry" />
+        </mxCell>
+        <mxCell id="in_tick_arr" parent="1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#000000;strokeWidth=1.5;endArrow=classic;endFill=1;" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="140" y="350" as="sourcePoint" />
+            <mxPoint x="280" y="350" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+
+        <!-- In 7: s_cur (6-bit) -->
+        <mxCell id="in_scur_lbl" parent="1" style="text;html=1;align=center;verticalAlign=bottom;fontSize=13;fontFamily=Helvetica;fontColor=#000000;" value="s_cur" vertex="1">
+          <mxGeometry height="20" width="130" x="140" y="374" as="geometry" />
+        </mxCell>
+        <mxCell id="in_scur_arr" parent="1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#000000;strokeWidth=1.5;endArrow=classic;endFill=1;" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="140" y="404" as="sourcePoint" />
+            <mxPoint x="280" y="404" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="in_scur_slash" parent="1" style="endArrow=none;html=1;strokeColor=#000000;strokeWidth=1.5;" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="206" y="410" as="sourcePoint" />
+            <mxPoint x="214" y="398" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="in_scur_width" parent="1" style="text;html=1;align=center;verticalAlign=top;fontSize=11;fontFamily=Helvetica;fontColor=#000000;" value="6" vertex="1">
+          <mxGeometry height="16" width="20" x="200" y="408" as="geometry" />
+        </mxCell>
+
+        <!-- In 8: m_cur (6-bit) -->
+        <mxCell id="in_mcur_lbl" parent="1" style="text;html=1;align=center;verticalAlign=bottom;fontSize=13;fontFamily=Helvetica;fontColor=#000000;" value="m_cur" vertex="1">
+          <mxGeometry height="20" width="130" x="140" y="428" as="geometry" />
+        </mxCell>
+        <mxCell id="in_mcur_arr" parent="1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#000000;strokeWidth=1.5;endArrow=classic;endFill=1;" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="140" y="458" as="sourcePoint" />
+            <mxPoint x="280" y="458" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="in_mcur_slash" parent="1" style="endArrow=none;html=1;strokeColor=#000000;strokeWidth=1.5;" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="206" y="464" as="sourcePoint" />
+            <mxPoint x="214" y="452" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="in_mcur_width" parent="1" style="text;html=1;align=center;verticalAlign=top;fontSize=11;fontFamily=Helvetica;fontColor=#000000;" value="6" vertex="1">
+          <mxGeometry height="16" width="20" x="200" y="462" as="geometry" />
+        </mxCell>
+
+        <!-- In 9: h_cur (5-bit) -->
+        <mxCell id="in_hcur_lbl" parent="1" style="text;html=1;align=center;verticalAlign=bottom;fontSize=13;fontFamily=Helvetica;fontColor=#000000;" value="h_cur" vertex="1">
+          <mxGeometry height="20" width="130" x="140" y="482" as="geometry" />
+        </mxCell>
+        <mxCell id="in_hcur_arr" parent="1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#000000;strokeWidth=1.5;endArrow=classic;endFill=1;" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="140" y="512" as="sourcePoint" />
+            <mxPoint x="280" y="512" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="in_hcur_slash" parent="1" style="endArrow=none;html=1;strokeColor=#000000;strokeWidth=1.5;" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="206" y="518" as="sourcePoint" />
+            <mxPoint x="214" y="506" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="in_hcur_width" parent="1" style="text;html=1;align=center;verticalAlign=top;fontSize=11;fontFamily=Helvetica;fontColor=#000000;" value="5" vertex="1">
+          <mxGeometry height="16" width="20" x="200" y="516" as="geometry" />
+        </mxCell>
+
+        <!-- OUTPUT ARROWS (FROM BOX TO RIGHT) -->
+        <!-- Out 1: adj_mode (2-bit) -->
+        <mxCell id="out_mode_lbl" parent="1" style="text;html=1;align=center;verticalAlign=bottom;fontSize=13;fontFamily=Helvetica;fontColor=#000000;" value="adj_mode" vertex="1">
+          <mxGeometry height="20" width="130" x="530" y="80" as="geometry" />
+        </mxCell>
+        <mxCell id="out_mode_arr" parent="1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#000000;strokeWidth=1.5;endArrow=classic;endFill=1;" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="520" y="110" as="sourcePoint" />
+            <mxPoint x="660" y="110" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="out_mode_slash" parent="1" style="endArrow=none;html=1;strokeColor=#000000;strokeWidth=1.5;" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="586" y="116" as="sourcePoint" />
+            <mxPoint x="594" y="104" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="out_mode_width" parent="1" style="text;html=1;align=center;verticalAlign=top;fontSize=11;fontFamily=Helvetica;fontColor=#000000;" value="2" vertex="1">
+          <mxGeometry height="16" width="20" x="580" y="114" as="geometry" />
+        </mxCell>
+
+        <!-- Out 2: adj_sec (6-bit) -->
+        <mxCell id="out_s_lbl" parent="1" style="text;html=1;align=center;verticalAlign=bottom;fontSize=13;fontFamily=Helvetica;fontColor=#000000;" value="adj_sec" vertex="1">
+          <mxGeometry height="20" width="130" x="530" y="170" as="geometry" />
+        </mxCell>
+        <mxCell id="out_s_arr" parent="1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#000000;strokeWidth=1.5;endArrow=classic;endFill=1;" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="520" y="200" as="sourcePoint" />
+            <mxPoint x="660" y="200" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="out_s_slash" parent="1" style="endArrow=none;html=1;strokeColor=#000000;strokeWidth=1.5;" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="586" y="206" as="sourcePoint" />
+            <mxPoint x="594" y="194" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="out_s_width" parent="1" style="text;html=1;align=center;verticalAlign=top;fontSize=11;fontFamily=Helvetica;fontColor=#000000;" value="6" vertex="1">
+          <mxGeometry height="16" width="20" x="580" y="204" as="geometry" />
+        </mxCell>
+
+        <!-- Out 3: adj_min (6-bit) -->
+        <mxCell id="out_m_lbl" parent="1" style="text;html=1;align=center;verticalAlign=bottom;fontSize=13;fontFamily=Helvetica;fontColor=#000000;" value="adj_min" vertex="1">
+          <mxGeometry height="20" width="130" x="530" y="260" as="geometry" />
+        </mxCell>
+        <mxCell id="out_m_arr" parent="1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#000000;strokeWidth=1.5;endArrow=classic;endFill=1;" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="520" y="290" as="sourcePoint" />
+            <mxPoint x="660" y="290" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="out_m_slash" parent="1" style="endArrow=none;html=1;strokeColor=#000000;strokeWidth=1.5;" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="586" y="296" as="sourcePoint" />
+            <mxPoint x="594" y="284" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="out_m_width" parent="1" style="text;html=1;align=center;verticalAlign=top;fontSize=11;fontFamily=Helvetica;fontColor=#000000;" value="6" vertex="1">
+          <mxGeometry height="16" width="20" x="580" y="294" as="geometry" />
+        </mxCell>
+
+        <!-- Out 4: adj_hour (5-bit) -->
+        <mxCell id="out_h_lbl" parent="1" style="text;html=1;align=center;verticalAlign=bottom;fontSize=13;fontFamily=Helvetica;fontColor=#000000;" value="adj_hour" vertex="1">
+          <mxGeometry height="20" width="130" x="530" y="350" as="geometry" />
+        </mxCell>
+        <mxCell id="out_h_arr" parent="1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#000000;strokeWidth=1.5;endArrow=classic;endFill=1;" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="520" y="380" as="sourcePoint" />
+            <mxPoint x="660" y="380" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="out_h_slash" parent="1" style="endArrow=none;html=1;strokeColor=#000000;strokeWidth=1.5;" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="586" y="386" as="sourcePoint" />
+            <mxPoint x="594" y="374" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="out_h_width" parent="1" style="text;html=1;align=center;verticalAlign=top;fontSize=11;fontFamily=Helvetica;fontColor=#000000;" value="5" vertex="1">
+          <mxGeometry height="16" width="20" x="580" y="384" as="geometry" />
+        </mxCell>
+
+        <!-- Out 5: load_en (1-bit) -->
+        <mxCell id="out_load_lbl" parent="1" style="text;html=1;align=center;verticalAlign=bottom;fontSize=13;fontFamily=Helvetica;fontColor=#000000;" value="load_en" vertex="1">
+          <mxGeometry height="20" width="130" x="530" y="440" as="geometry" />
+        </mxCell>
+        <mxCell id="out_load_arr" parent="1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#000000;strokeWidth=1.5;endArrow=classic;endFill=1;" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="520" y="470" as="sourcePoint" />
+            <mxPoint x="660" y="470" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
