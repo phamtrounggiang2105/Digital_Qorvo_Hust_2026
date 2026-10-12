@@ -9,6 +9,7 @@ module tb_button();
     wire pulse_1s; 
     wire btn_tick;
 
+    // DUT
     reset_sync u_reset_sync(
         .clk(clk),
         .rstn(rstn),
@@ -32,6 +33,7 @@ module tb_button();
 
     integer tick_cnt;
 
+    // Clock 1MHz
     initial begin
         clk = 0;
         forever #500 clk = ~ clk;
