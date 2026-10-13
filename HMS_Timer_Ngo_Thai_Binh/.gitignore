@@ -1,0 +1,23 @@
+# Simulation outputs and logs
+sim/
+*.log
+*.wlf
+*.vcd
+*.ucdb
+transcript
+covhtmlreport/
+vsim.wlf
+work/
+
+# Editor / OS files
+.DS_Store
+*.swp
+*.swo
+*~
+.$*.bkp
+*.drawio.bkp
+*.drawio.dtmp
+# OpenLane ASIC synthesis and flow runs
+openlane/runs/
+runs/
+

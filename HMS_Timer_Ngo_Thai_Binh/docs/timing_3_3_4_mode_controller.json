@@ -1,0 +1,16 @@
+{
+  "signal": [
+    {"name": "clk (1MHz)", "wave": "p..................."},
+    {"name": "sel_pulse", "wave": "0.10..10..10..10...."},
+    {"name": "up_pulse", "wave": "0...10..10.........."},
+    {"name": "mode[1:0]", "wave": "=..=...=...=...=....", "data": ["RUN", "ADJ_SEC", "ADJ_MIN", "ADJ_HR", "RUN"]},
+    {"name": "adj_sec[5:0]", "wave": "=...=...............", "data": ["6'd0", "6'd1"]},
+    {"name": "adj_min[5:0]", "wave": "=.......=...........", "data": ["6'd0", "6'd1"]},
+    {"name": "load_en (1-cycle)", "wave": "0..............10..."},
+    {"name": "en_fsm", "wave": "0.101010101010110..."}
+  ],
+  "head": {
+    "text": "mode_controller Timing: FSM Mode Transitions, Buffer Adjustment, and 1-Cycle load_en Commit",
+    "tick": 0
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "signal": [
+    {"name": "clk (1MHz)", "wave": "p..................."},
+    {"name": "sec_tick", "wave": "0.10......10...0...."},
+    {"name": "load_en", "wave": "0...........0..10..."},
+    {"name": "adj_sec[5:0]", "wave": "=..............=....", "data": ["6'd0", "6'd42"]},
+    {"name": "r_sec[5:0]", "wave": "=..=.......=....=...", "data": ["6'd58", "6'd59", "6'd00", "6'd42"]},
+    {"name": "sec_rollover", "wave": "0..........10..0...."},
+    {"name": "en_sec (ICG)", "wave": "0.10......10...10..."}
+  ],
+  "head": {
+    "text": "second_counter Timing: Real-Time Incrementation, sec_rollover Generation, and Synchronous Parallel Load",
+    "tick": 0
+  }
+}
