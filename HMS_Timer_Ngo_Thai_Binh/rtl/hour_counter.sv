@@ -12,20 +12,18 @@
 
 `timescale 1ns / 1ps
 
-module hour_counter #(
-    parameter int P_HOUR_WIDTH = 5
-)(
-    input  logic                   clk,          // System Master Clock (1 MHz)
-    input  logic                   rstn,         // Reset, Active-Low
-    input  logic                   min_rollover, // 1-Cycle Rollover Enable from minute_counter
-    input  logic                   load_en,      // 1-Cycle Pulse to Load Parallel Value
-    input  logic [P_HOUR_WIDTH-1:0] load_val,     // Parallel Load Value from mode_controller
-    output logic [P_HOUR_WIDTH-1:0] h_out         // Hour Output (0..23)
+module hour_counter (
+    input  logic       clk,          // System Master Clock (1 MHz)
+    input  logic       rstn,         // Reset, Active-Low
+    input  logic       min_rollover, // 1-Cycle Rollover Enable from minute_counter
+    input  logic       load_en,      // 1-Cycle Pulse to Load Parallel Value
+    input  logic [4:0] load_val,     // Parallel Load Value from mode_controller
+    output logic [4:0] h_out         // Hour Output (0..23)
 );
 
-    logic [P_HOUR_WIDTH-1:0] r_hour;
+    logic [4:0] r_hour;
 
-    always_ff @(posedge clk) begin
+    always_ff @(posedge clk or negedge rstn) begin
         if (!rstn) begin
             r_hour <= '0;
         end else if (load_en) begin

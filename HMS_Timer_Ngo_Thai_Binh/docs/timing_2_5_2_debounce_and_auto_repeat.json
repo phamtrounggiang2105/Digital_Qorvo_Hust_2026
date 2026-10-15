@@ -1,15 +1,16 @@
 {
   "signal": [
     {"name": "clk (1MHz)", "wave": "p..................."},
-    {"name": "sample_tick (1kHz)", "wave": "01010101010101010101"},
+    {"name": "pulse_1khz (1kHz)", "wave": "01010101010101010101"},
     {"name": "btn_in (async)", "wave": "0.101.1............."},
-    {"name": "sync_q2", "wave": "0...1..............."},
-    {"name": "debounce_cnt[4:0]", "wave": "=...=======...=======", "data": ["0", "1", "2", "...", "17", "18", "0", "1", "...", "17", "18"]},
-    {"name": "btn_pulse (1-cycle)", "wave": "0..........10.......10"},
-    {"name": "en_fsm / ICG", "wave": "0..........10.......10"}
+    {"name": "meta_btn", "wave": "0..101.1............"},
+    {"name": "sync_btn", "wave": "0...101.1...........", "node": "...a"},
+    {"name": "timer_cnt[4:0]", "wave": "=...=======...=======", "data": ["0", "0", "0", "1", "2", "...", "19", "0", "0", "0", "0"]},
+    {"name": "debounced_btn", "wave": "0..........1........"},
+    {"name": "btn_event (1-cycle)", "wave": "0..........10......."}
   ],
   "head": {
-    "text": "HMS_Timer Timing: Button Debounce (18ms = 20ms - 10%) & Auto-Repeat Stream",
+    "text": "HMS_Timer Timing: Two-Way Button Debounce (20ms) and Single-Event Pulse",
     "tick": 0
   }
 }

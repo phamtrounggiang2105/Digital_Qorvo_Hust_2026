@@ -12,21 +12,19 @@
 
 `timescale 1ns / 1ps
 
-module second_counter #(
-    parameter int P_SEC_WIDTH = 6
-)(
-    input  logic                   clk,          // System Master Clock (1 MHz)
-    input  logic                   rstn,         // Reset, Active-Low
-    input  logic                   sec_pulse,    // 1-Cycle Pulse from Prescaler (1 Hz Clock Enable)
-    input  logic                   load_en,      // 1-Cycle Pulse to Load Parallel Value
-    input  logic [P_SEC_WIDTH-1:0] load_val,     // Parallel Load Value from mode_controller
-    output logic [P_SEC_WIDTH-1:0] s_out,        // Second Output (0..59)
-    output logic                   sec_rollover  // 1-Cycle Rollover Enable to Minute Counter
+module second_counter (
+    input  logic       clk,          // System Master Clock (1 MHz)
+    input  logic       rstn,         // Reset, Active-Low
+    input  logic       sec_pulse,    // 1-Cycle Pulse from Prescaler (1 Hz Clock Enable)
+    input  logic       load_en,      // 1-Cycle Pulse to Load Parallel Value
+    input  logic [5:0] load_val,     // Parallel Load Value from mode_controller
+    output logic [5:0] s_out,        // Second Output (0..59)
+    output logic       sec_rollover  // 1-Cycle Rollover Enable to Minute Counter
 );
 
-    logic [P_SEC_WIDTH-1:0] r_sec;
+    logic [5:0] r_sec;
 
-    always_ff @(posedge clk) begin
+    always_ff @(posedge clk or negedge rstn) begin
         if (!rstn) begin
             r_sec <= '0;
         end else if (load_en) begin

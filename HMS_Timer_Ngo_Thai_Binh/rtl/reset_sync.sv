@@ -1,10 +1,11 @@
 //==============================================================================
 // File: reset_sync.sv
 // Module: reset_sync
-// Description: Standard 2-Stage Flip-Flop Synchronous Reset Synchronizer.
-//              - Synchronizes raw reset input to posedge clk.
-//              - Eliminates contact bounce, recovery/removal violations and metastability.
-//              - 100% synchronous, portable across ASIC and FPGA.
+// Description: Standard 2-Stage Flip-Flop Reset Synchronizer (Asynchronous Assert, Synchronous Deassert).
+//              - Immediate asynchronous assertion upon rstn_async = 0 (zero clock dependency).
+//              - Glitch-free synchronous deassertion after 2 clock cycles upon rstn_async release.
+//              - Eliminates recovery/removal timing violations and metastability.
+//              - 100% portable across ASIC and FPGA.
 // Project: HMS_Timer (Hour-Minute-Second Timer IP Core)
 // Language: SystemVerilog (IEEE 1800 Synthesizable)
 //==============================================================================
@@ -19,15 +20,20 @@ module reset_sync (
 
     // 2-Stage Synchronizer Flip-Flops
     // Attributes to prevent logic optimization / shift register merging during synthesis
-    (* async_reg = "true" *) logic r_sync_stage1;
-    (* async_reg = "true" *) logic r_sync_stage2;
+    (* async_reg = "true" *) logic meta_rstn;
+    (* async_reg = "true" *) logic sync_rstn;
 
-    always_ff @(posedge clk) begin
-        r_sync_stage1 <= rstn_async;
-        r_sync_stage2 <= r_sync_stage1;
+    always_ff @(posedge clk or negedge rstn_async) begin
+        if (!rstn_async) begin
+            meta_rstn <= 1'b0;
+            sync_rstn <= 1'b0;
+        end else begin
+            meta_rstn <= 1'b1;
+            sync_rstn <= meta_rstn;
+        end
     end
 
     // Output assignment
-    assign rstn_sync = r_sync_stage2;
+    assign rstn_sync = sync_rstn;
 
 endmodule

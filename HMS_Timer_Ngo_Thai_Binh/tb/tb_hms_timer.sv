@@ -31,8 +31,6 @@ module tb_hms_timer;
 
     // Simulation Prescaler setting: 100 cycles per 1 second pulse
     localparam int PL_SIM_CLK_FREQ_HZ   = 100;
-    localparam int PL_SIM_PSC_COUNT_MAX = PL_SIM_CLK_FREQ_HZ - 1;
-    localparam int PL_SIM_PSC_WIDTH     = 20;
 
     // Clock generator
     logic clk;
@@ -42,11 +40,7 @@ module tb_hms_timer;
     end
 
     // Interface instantiation
-    hms_timer_if #(
-        .P_SEC_WIDTH(6),
-        .P_MIN_WIDTH(6),
-        .P_HOUR_WIDTH(5)
-    ) vif (
+    hms_timer_if vif (
         .clk(clk)
     );
 
@@ -54,15 +48,8 @@ module tb_hms_timer;
     hms_timer #(
         .P_CLK_FREQ_HZ        (PL_SIM_CLK_FREQ_HZ),
         .P_PULSE_1KHZ_FREQ_HZ (100),
-        .P_PULSE_1HZ_FREQ_HZ  (1),
-        .P_DIV_1KHZ_MAX       (0),
-        .P_DIV_1HZ_MAX        (PL_SIM_PSC_COUNT_MAX),
-        .P_DEBOUNCE_PULSES    (20), // 20 pulses nominal of sampling clock
-        .P_DEBOUNCE_TOL_PCT   (10), // ±10% tolerance -> PL_EFFECTIVE_PULSES = 18
-        .P_TIMEOUT_SEC        (5),
-        .P_SEC_WIDTH          (6),
-        .P_MIN_WIDTH          (6),
-        .P_HOUR_WIDTH         (5)
+        .P_DEBOUNCE_PULSES    (20), // 20 pulses of sampling clock
+        .P_TIMEOUT_SEC        (5)
     ) dut (
         .clk       (vif.clk),
         .rstn      (vif.rstn),
@@ -338,40 +325,32 @@ module tb_hms_timer;
         $display("--------------------------------------------------------------------------------");
         driver.reset_dut(10);
         
-        // 1. Navigate to ADJ_HOUR mode: RUN -> SEC -> MIN -> HOUR
-        driver.pulse_sel(); // RUN -> SEC
-        driver.pulse_sel(); // SEC -> MIN
-        driver.pulse_sel(); // MIN -> HOUR
-        scoreboard.check_mode(MODE_ADJ_HOUR, "TC10_HOUR_MODE");
-
-        // Set hour to 23: 0 -> 23 via wrap-down
-        driver.pulse_down();
-        scoreboard.check_time(23, 0, 0, "TC10_HOUR_SET_23");
-
-        // 2. Navigate to ADJ_MIN mode: HOUR -> RUN -> SEC -> MIN
-        driver.pulse_sel(); // HOUR -> RUN
-        driver.pulse_sel(); // RUN -> SEC
-        driver.pulse_sel(); // SEC -> MIN
-        scoreboard.check_mode(MODE_ADJ_MIN, "TC10_MIN_MODE");
-
-        // Set minute to 59: 0 -> 59 via wrap-down
-        driver.pulse_down();
-        scoreboard.check_time(23, 59, 0, "TC10_MIN_SET_59");
-
-        // 3. Navigate to ADJ_SEC mode: MIN -> HOUR -> RUN -> SEC
-        driver.pulse_sel(); // MIN -> HOUR
-        driver.pulse_sel(); // HOUR -> RUN
+        // 1. Navigate to ADJ_SEC mode: RUN -> SEC
         driver.pulse_sel(); // RUN -> SEC
         scoreboard.check_mode(MODE_ADJ_SEC, "TC10_SEC_MODE");
 
         // Set second to 58: 0 -> 59 -> 58 via wrap-down
         driver.pulse_down(); // 0 -> 59
         driver.pulse_down(); // 59 -> 58
+        scoreboard.check_time(0, 0, 58, "TC10_SEC_SET_58");
+
+        // 2. Navigate to ADJ_MIN mode: SEC -> MIN
+        driver.pulse_sel(); // SEC -> MIN
+        scoreboard.check_mode(MODE_ADJ_MIN, "TC10_MIN_MODE");
+
+        // Set minute to 59: 0 -> 59 via wrap-down
+        driver.pulse_down();
+        scoreboard.check_time(0, 59, 58, "TC10_MIN_SET_59");
+
+        // 3. Navigate to ADJ_HOUR mode: MIN -> HOUR
+        driver.pulse_sel(); // MIN -> HOUR
+        scoreboard.check_mode(MODE_ADJ_HOUR, "TC10_HOUR_MODE");
+
+        // Set hour to 23: 0 -> 23 via wrap-down
+        driver.pulse_down();
         scoreboard.check_time(23, 59, 58, "TC10_TIME_SET_23_59_58");
 
-        // 4. Switch to MODE_RUN for real-time natural counting: SEC -> MIN -> HOUR -> RUN
-        driver.pulse_sel(); // SEC -> MIN
-        driver.pulse_sel(); // MIN -> HOUR
+        // 4. Switch to MODE_RUN for real-time natural counting: HOUR -> RUN
         driver.pulse_sel(); // HOUR -> RUN
         scoreboard.check_mode(MODE_RUN, "TC10_ENTER_RUN_MODE");
 
@@ -421,10 +400,10 @@ module tb_hms_timer;
         scoreboard.check_mode(MODE_RUN, "TC11_RETURN_RUN");
     endtask
 
-    // TC12: Button Debouncer 20ms Hold (10-Percent Tolerance) & Auto-Repeat Verification
+    // TC12: Button Debouncer 20ms Hold & Single-Event Verification
     task run_tc12_button_debouncer_and_autorepeat();
         $display("\n--------------------------------------------------------------------------------");
-        $display(">>> TEST CASE 12: Button Debounce 20ms Hold (10-Percent Tolerance) & Auto-Repeat <<<");
+        $display(">>> TEST CASE 12: Button Debounce 20ms Hold & Single Event Verification <<<");
         $display("--------------------------------------------------------------------------------");
         driver.reset_dut(10);
 
@@ -432,47 +411,38 @@ module tb_hms_timer;
         driver.pulse_sel();
         scoreboard.check_mode(MODE_ADJ_SEC, "TC12_ENTER_SEC_MODE");
 
-        // 1. Hold UP button for 17 cycles (< 18 pulses lower tolerance threshold) -> Strictly ignored (Noise rejection)
-        log_info("Testing button hold below 10-percent tolerance threshold (17 cycles < 18 cycles)...");
+        // 1. Hold UP button for 19 cycles (< 20 pulses threshold) -> Strictly ignored (Noise rejection)
+        log_info("Testing button hold below debounce threshold (19 cycles < 20 cycles)...");
         @(posedge vif.clk);
         vif.up_in <= 1'b1;
-        repeat (17) @(posedge vif.clk);
+        repeat (19) @(posedge vif.clk);
         vif.up_in <= 1'b0;
-        driver.wait_cycles(5);
-        scoreboard.check_time(0, 0, 0, "TC12_REJECT_SHORT_PRESS_BELOW_TOLERANCE");
+        driver.wait_cycles(25);
+        scoreboard.check_time(0, 0, 0, "TC12_REJECT_SHORT_PRESS_BELOW_THRESHOLD");
 
-        // 2. Hold UP button for 18 cycles (= 20 - 10-percent lower tolerance boundary) -> Accepted, 1 pulse
-        log_info("Testing button hold at lower tolerance boundary (18 cycles = 20 minus 10-percent)...");
-        @(posedge vif.clk);
-        vif.up_in <= 1'b1;
-        repeat (18) @(posedge vif.clk);
-        vif.up_in <= 1'b0;
-        driver.wait_cycles(5);
-        scoreboard.check_time(0, 0, 1, "TC12_ACCEPT_LOWER_TOLERANCE_BOUNDARY");
-
-        // 3. Hold UP button for 20 cycles (nominal debounce time) -> Accepted, 1 pulse
+        // 2. Hold UP button for 20 cycles (= nominal debounce time) -> Accepted, 1 pulse
         log_info("Testing button hold at nominal debounce time (20 cycles)...");
-        driver.pulse_up(20, 5);
-        scoreboard.check_time(0, 0, 2, "TC12_ACCEPT_NOMINAL_DEBOUNCE");
+        driver.pulse_up(20, 25);
+        scoreboard.check_time(0, 0, 1, "TC12_ACCEPT_NOMINAL_DEBOUNCE");
 
-        // 4. Hold UP button for 22 cycles (upper tolerance boundary = 20 + 10-percent) -> Accepted, 1 pulse (< 36 cycles)
-        log_info("Testing button hold at upper tolerance boundary (22 cycles = 20 plus 10-percent)...");
+        // 3. Hold UP button for 25 cycles (< 40 cycles) -> Accepted, still 1 pulse
+        log_info("Testing button hold between 1 and 2 debounce periods (25 cycles)...");
         @(posedge vif.clk);
         vif.up_in <= 1'b1;
-        repeat (22) @(posedge vif.clk);
+        repeat (25) @(posedge vif.clk);
         vif.up_in <= 1'b0;
-        driver.wait_cycles(5);
-        scoreboard.check_time(0, 0, 3, "TC12_ACCEPT_UPPER_TOLERANCE_BOUNDARY");
+        driver.wait_cycles(25);
+        scoreboard.check_time(0, 0, 2, "TC12_ACCEPT_INTERMEDIATE_HOLD");
 
-        // 5. Hold UP button for 54 cycles (3 * 18 cycles) -> Auto-repeat generates 3 pulses!
-        log_info("Testing button held continuously for Auto-Repeat (54 cycles = 3 x 18 cycles -> 3 pulses)...");
+        // 4. Hold UP button continuously (60 cycles -> exactly 1 event pulse, no auto-repeat)...
+        log_info("Testing button held continuously (60 cycles -> single pulse, no auto-repeat)...");
         @(posedge vif.clk);
         vif.up_in <= 1'b1;
-        repeat (54) @(posedge vif.clk);
+        repeat (60) @(posedge vif.clk);
         vif.up_in <= 1'b0;
-        driver.wait_cycles(5);
-        // Previous value was 3, plus 3 auto-repeat pulses = 6
-        scoreboard.check_time(0, 0, 6, "TC12_AUTO_REPEAT_INCREMENT");
+        driver.wait_cycles(25);
+        // Previous value was 2, plus 1 pulse = 3
+        scoreboard.check_time(0, 0, 3, "TC12_SINGLE_EVENT_LONG_HOLD");
 
         // Return to RUN mode
         driver.pulse_sel(); // SEC -> MIN
@@ -520,9 +490,9 @@ module tb_hms_timer;
         end
         repeat (3) @(posedge vif.clk); #1ns;
 
-        // Step 6: Verify FSM automatically returns to MODE_RUN and switches display back to background counter (25 seconds elapsed)
+        // Step 6: Verify FSM automatically returns to MODE_RUN and switches display back to background counter (41 seconds elapsed)
         scoreboard.check_mode(MODE_RUN, "TC13_AUTO_RETURNED_TO_RUN");
-        scoreboard.check_time(0, 0, 25, "TC13_RESUME_BACKGROUND_TIME_ZERO_DRIFT");
+        scoreboard.check_time(0, 0, 41, "TC13_RESUME_BACKGROUND_TIME_ZERO_DRIFT");
     endtask
 
     // TC14: 5s Inactivity Timeout Keep-Alive Activity Reset

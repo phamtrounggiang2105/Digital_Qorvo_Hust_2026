@@ -81,7 +81,7 @@ compile: $(WORK_LIB)
 	$(VLOG) $(VLOG_FLAGS) $(RTL_SRCS) $(TB_SRCS) | tee $(SIM_DIR)/compile.log
 
 # Run batch simulation
-sim: $(WORK_LIB)
+sim: compile
 	@echo "-----------------------------------------------------------------"
 	@echo ">>> Running Simulation with QuestaSim vsim... <<<"
 	@echo "-----------------------------------------------------------------"

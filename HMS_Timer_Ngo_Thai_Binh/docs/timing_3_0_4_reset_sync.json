@@ -2,8 +2,8 @@
   "signal": [
     {"name": "clk (1MHz)", "wave": "p..................."},
     {"name": "rstn_async (raw)", "wave": "1.0.........1......."},
-    {"name": "r_sync_stage1", "wave": "1.0..........1......"},
-    {"name": "r_sync_stage2", "wave": "1.0...........1....."},
+    {"name": "meta_rstn", "wave": "1.0..........1......"},
+    {"name": "sync_rstn", "wave": "1.0...........1....."},
     {"name": "rstn_sync (Normal)", "wave": "1.0...........1....."},
     {"name": "test_mode (Scan)", "wave": "0..................."},
     {"name": "rstn_sync (DFT Mode)", "wave": "1.0.........1......."}

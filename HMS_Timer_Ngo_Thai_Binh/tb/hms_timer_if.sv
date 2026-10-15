@@ -9,23 +9,19 @@
 
 `timescale 1ns / 1ps
 
-interface hms_timer_if #(
-    parameter int P_SEC_WIDTH  = 6,
-    parameter int P_MIN_WIDTH  = 6,
-    parameter int P_HOUR_WIDTH = 5
-)(
+interface hms_timer_if (
     input logic clk
 );
     // Asynchronous / Control inputs
-    logic                    rstn;
-    logic                    sel_in;
-    logic                    up_in;
-    logic                    down_in;
+    logic       rstn;
+    logic       sel_in;
+    logic       up_in;
+    logic       down_in;
 
     // Time outputs
-    logic [P_HOUR_WIDTH-1:0] h_out;
-    logic [P_MIN_WIDTH-1:0]  m_out;
-    logic [P_SEC_WIDTH-1:0]  s_out;
+    logic [4:0] h_out;
+    logic [5:0] m_out;
+    logic [5:0] s_out;
 
     // Internal probe signals for deep-cycle verification
     logic                    rstn_sync;

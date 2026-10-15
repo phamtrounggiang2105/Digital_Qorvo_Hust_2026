@@ -1,15 +1,16 @@
 {
   "signal": [
     {"name": "clk (1MHz)", "wave": "p..................."},
-    {"name": "clk_gated (1kHz)", "wave": "01010101010101010101"},
-    {"name": "btn_in (async)", "wave": "0.10.1.............."},
-    {"name": "r_sync_1", "wave": "0..10..1............"},
-    {"name": "r_sync_2", "wave": "0...10..1..........."},
-    {"name": "r_counter[4:0]", "wave": "=...=..======...====", "data": ["0", "0", "0", "1", "2", "...", "18", "0", "1", "18"]},
-    {"name": "btn_pulse (1-cycle)", "wave": "0.............10...10"}
+    {"name": "clk_en (1kHz)", "wave": "01010101010101010101"},
+    {"name": "btn_in (async)", "wave": "0.10.1........0....."},
+    {"name": "meta_btn", "wave": "0..10..1........0..."},
+    {"name": "sync_btn", "wave": "0...10..1........0.."},
+    {"name": "timer_cnt[4:0]", "wave": "=...=..======...====", "data": ["0", "0", "0", "1", "2", "...", "19", "0", "1", "19"]},
+    {"name": "debounced_btn", "wave": "0.............1...0."},
+    {"name": "btn_event (1-cycle)", "wave": "0.............10...."}
   ],
   "head": {
-    "text": "button_debouncer Timing: Glitch Filtering (<18ms) and Valid 1-Cycle Pulse Output",
+    "text": "button_debouncer: Two-Way 20ms Qualification, Glitch Filter and 1-Cycle Event Pulse",
     "tick": 0
   }
 }

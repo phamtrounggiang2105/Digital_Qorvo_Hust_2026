@@ -161,7 +161,7 @@ class hms_scoreboard;
         $display(" TOTAL FAILED CHECKS           : %0d", failed_checks);
         $display("--------------------------------------------------------------------------------");
         if (failed_checks == 0 && total_checks > 0) begin
-            $display("%s >>> VERIFICATION STATUS: 100%% PASSED (TAPE-OUT READY QUALITY) <<< %s", PL_COLOR_GREEN, PL_COLOR_RESET);
+            $display("%s >>> VERIFICATION STATUS: 100%% PASSED <<< %s", PL_COLOR_GREEN, PL_COLOR_RESET);
         end else begin
             $display("%s >>> VERIFICATION STATUS: FAILED (%0d FAILURES DETECTED) <<< %s", PL_COLOR_RED, failed_checks, PL_COLOR_RESET);
         end
