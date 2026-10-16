@@ -99,13 +99,17 @@ wave: $(WORK_LIB)
 # Compile and run with Functional & Code Coverage
 cov: $(WORK_LIB)
 	@echo "-----------------------------------------------------------------"
-	@echo ">>> Compiling with Coverage Enabled... <<<"
+	@echo ">>> Compiling RTL with Code Coverage Enabled... <<<"
 	@echo "-----------------------------------------------------------------"
-	$(VLOG) $(VLOG_FLAGS) $(COV_FLAGS) $(RTL_SRCS) $(TB_SRCS)
+	$(VLOG) $(VLOG_FLAGS) $(COV_FLAGS) $(RTL_SRCS)
+	@echo ">>> Compiling Testbench (Functional Coverage Only)... <<<"
+	$(VLOG) $(VLOG_FLAGS) $(TB_SRCS)
 	@echo ">>> Running Simulation with Coverage Collection... <<<"
 	$(VSIM) -c -coverage -work $(WORK_LIB) $(TB_TOP) -do "coverage save -onexit $(SIM_DIR)/hms_cov.ucdb; run -all; quit -f" -l $(SIM_DIR)/sim_cov.log
 	@echo ">>> Generating HTML Coverage Report... <<<"
-	$(VCOVER) report -html -htmldir $(SIM_DIR)/cov_html $(SIM_DIR)/hms_cov.ucdb
+	$(VCOVER) report -html -output $(SIM_DIR)/cov_html $(SIM_DIR)/hms_cov.ucdb
+	@echo ">>> Overall Coverage Summary: <<<"
+	$(VCOVER) report -summary $(SIM_DIR)/hms_cov.ucdb
 
 # Verilator lint check
 verilator_test:

@@ -689,10 +689,10 @@ Giản đồ thời gian chuyển mạch hiển thị không độ trễ giữa 
 7. **TC7: Kiểm chứng Khóa cờ tràn khi chỉnh sửa (Rollover Gating Isolation):** Đảm bảo chỉnh giây qua 59 -> 00 không làm thay đổi phút trong bộ đệm.
 8. **TC8: Kiểm chứng Xung đột phím đồng thời (Simultaneous UP/DOWN Conflict):** Bấm đồng thời UP và DOWN, giá trị giữ nguyên.
 9. **TC9: Kiểm chứng Miễn nhiễm Glitch bất đồng bộ (Asynchronous Narrow Glitch Immunity):** Bơm xung glitch < 1 cycle, hệ thống bỏ qua hoàn toàn.
-10. **TC10: Kiểm chứng Tràn qua nửa đêm (23:59:59 Midnight Full Cascade Rollover):** Chỉnh giờ 23:59:58, commit nạp vào counter và đếm thời gian thực qua 23:59:59 -> 00:00:00.
+10. **TC10: Kiểm chứng Tràn thời gian thực & Rollover đa cấp (Real-Time Rollovers & Midnight Cascade):** Kiểm tra toàn diện 3 giai đoạn: (A) Tràn giây thông thường 10:15:58 -> 10:15:59 -> 10:16:00 (kích hoạt `sec_rollover = 1`, `min_rollover = 0`, tăng phút `r_min + 1`); (B) Tràn phút thông thường 10:59:58 -> 10:59:59 -> 11:00:00 (kích hoạt `min_rollover = 1`, tăng giờ `r_hour + 1`); (C) Tràn toàn tầng nửa đêm 23:59:58 -> 23:59:59 -> 00:00:00.
 11. **TC11: Kiểm chứng Miễn nhiễm phím bấm ở Chế độ RUN (Inactive Button Immunity):** Nhấn UP/DOWN trong RUN không gây sai lệch.
 12. **TC12: Kiểm chứng Khử rung 20ms & Phát xung đơn chu kỳ (Single Event Verification):** Nhấn giữ < 20ms (19 xung mẫu) bị hủy hoàn toàn (chống rung/nhiễu), nhấn giữ >= 20ms (20 xung mẫu) phát đúng duy nhất 1 xung kích hoạt `btn_event` (1 chu kỳ clock hệ thống), giữ nút liên tục trong thời gian dài (60 chu kỳ) không tự động lặp (no auto-repeat), giải trừ nhấn nhả hoàn toàn trước khi tiếp nhận lần bấm kế tiếp.
-13. **TC13: Kiểm chứng Timeout 5s & Đếm nền Zero-Drift:** Chỉnh dở dang Giây, Phút, Giờ rồi chờ 5s, thời gian tự động hủy đệm và bộ MUX chuyển về counter nền đang chạy chính xác.
+13. **TC13: Kiểm chứng Timeout 5s & Đếm nền Zero-Drift trên mọi chế độ (Inactivity Timeout & Rollback):** Kiểm chứng tính năng tự động hủy đệm và thoát về RUN sau 5s không thao tác trên cả 3 chế độ chỉnh sửa: (1) Chỉnh giây `MODE_ADJ_SEC`; (2) Chỉnh phút `MODE_ADJ_MIN`; (3) Chỉnh giờ `MODE_ADJ_HOUR` kết hợp đối soát không trôi thời gian nền.
 14. **TC14: Kiểm chứng Giữ trạng thái Timeout khi có thao tác (Timeout Keep-Alive Reset):** Bấm phím sau mỗi 3s (< 5s), timer timeout bị reset và duy trì chế độ chỉnh sửa.
 
 ---
@@ -703,11 +703,15 @@ Giản đồ thời gian chuyển mạch hiển thị không độ trễ giữa 
 
 | Hạng mục kiểm tra | Tổng số kiểm tra | Đạt (Passed) | Thất bại (Failed) | Tỷ lệ hoàn thành |
 | :--- | :---: | :---: | :---: | :---: |
-| **Tổng số Assertions & Checks** | 89 | 89 | 0 | **100.0%** |
+| **Tổng số Assertions & Checks** | 102 | 102 | 0 | **100.0%** |
 | **Độ bao phủ chuyển trạng thái FSM (FSM Coverage)** | - | - | - | **100.0%** |
 | **Độ bao phủ dải giá trị biên (Boundary Coverage)** | - | - | - | **100.0%** |
-| **Độ bao phủ kích thích & Chéo (Cross Coverage)** | - | - | - | **90.18%** |
+| **Độ bao phủ kích thích & Chéo (Cross Coverage)** | - | - | - | **100.0%** |
+| **Độ bao phủ tổng thể Covergroups (Functional)** | 54 bins | 54 | 0 | **100.0%** |
+| **Độ bao phủ câu lệnh RTL (Statement Coverage)** | 127 | 126 | 1 | **99.21%** |
+| **Độ bao phủ nhánh RTL (Branch Coverage)** | 138 | 133 | 5 | **96.37%** |
+| **Độ bao phủ điều kiện RTL (Condition Coverage)** | 43 | 40 | 3 | **93.02%** |
 | **Tổng số SVA SystemVerilog Assertions** | 6 | 6 | 0 | **100.0%** |
 | **Trạng thái kiểm chứng tổng thể** | - | - | - | **PASSED (TAPE-OUT READY)** |
 
-*Ghi chú: Kết quả kiểm chứng đạt 100% Passed trên bộ 14 Functional Test Cases với 89/89 Assertions & Checks thành công.*
+*Ghi chú: Kết quả kiểm chứng đạt 100% Passed trên bộ 14 Functional Test Cases với 102/102 Assertions & Checks thành công, Functional Coverage đạt tuyệt đối 100.00%.*

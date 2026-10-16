@@ -100,7 +100,12 @@ class hms_coverage;
         cross_btn_mode: cross cp_mode, cp_up, cp_down;
 
         // Cross: Rollovers in RUN mode
-        cross_rollover_run: cross cp_mode, cp_sec_roll, cp_min_roll;
+        cross_rollover_run: cross cp_mode, cp_sec_roll, cp_min_roll {
+            // Ignore edit modes: inactivity timeout (5s) prevents waiting for background rollovers
+            ignore_bins non_run_modes = binsof(cp_mode.a_s) || binsof(cp_mode.a_m) || binsof(cp_mode.a_h);
+            // Ignore physically illegal hardware condition: min_rollover requires sec_rollover
+            ignore_bins illegal_min_without_sec = binsof(cp_sec_roll.inactive) && binsof(cp_min_roll.active);
+        }
     endgroup
 
     function new(virtual hms_timer_if vif);

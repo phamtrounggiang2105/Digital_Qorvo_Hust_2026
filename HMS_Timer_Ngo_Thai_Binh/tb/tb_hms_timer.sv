@@ -318,11 +318,64 @@ module tb_hms_timer;
         scoreboard.check_mode(MODE_ADJ_MIN, "TC9_MODE_INTACT");
     endtask
 
-    // TC10: 23:59:59 to 00:00:00 Midnight Rollover Cascade
+    // TC10: Real-Time Rollovers (Minute increment, Hour increment, Midnight cascade)
     task run_tc10_midnight_cascade();
         $display("\n--------------------------------------------------------------------------------");
-        $display(">>> TEST CASE 10: 23:59:59 to 00:00:00 Midnight Rollover Full Cascade <<<");
+        $display(">>> TEST CASE 10: Real-Time Rollovers (Minute, Hour & Midnight Cascade) <<<");
         $display("--------------------------------------------------------------------------------");
+        
+        // ---------------------------------------------------------------------
+        // Part A: Normal Minute Increment (sec_rollover=1, min_rollover=0)
+        // Set time to 10:15:58 -> count to 10:15:59 -> 10:16:00
+        // ---------------------------------------------------------------------
+        log_info("Part A: Verifying normal minute increment (10:15:58 -> 10:16:00)...");
+        driver.reset_dut(10);
+        driver.pulse_sel(); // RUN -> SEC
+        driver.pulse_down(); // 59
+        driver.pulse_down(); // 58
+        driver.pulse_sel(); // SEC -> MIN
+        repeat (15) driver.pulse_up(); // 15
+        driver.pulse_sel(); // MIN -> HOUR
+        repeat (10) driver.pulse_up(); // 10
+        driver.pulse_sel(); // HOUR -> RUN
+        scoreboard.check_time(10, 15, 58, "TC10_PART_A_SET_10_15_58");
+
+        @(posedge vif.sec_pulse);
+        @(posedge vif.clk); #1ns;
+        scoreboard.check_time(10, 15, 59, "TC10_PART_A_COUNT_10_15_59");
+
+        @(posedge vif.sec_pulse);
+        @(posedge vif.clk); #1ns;
+        scoreboard.check_time(10, 16, 0, "TC10_PART_A_MINUTE_INC_10_16_00");
+
+        // ---------------------------------------------------------------------
+        // Part B: Normal Hour Increment (sec_rollover=1, min_rollover=1)
+        // Set time to 10:59:58 -> count to 10:59:59 -> 11:00:00
+        // ---------------------------------------------------------------------
+        log_info("Part B: Verifying normal hour increment (10:59:58 -> 11:00:00)...");
+        driver.reset_dut(10);
+        driver.pulse_sel(); // RUN -> SEC
+        driver.pulse_down(); // 59
+        driver.pulse_down(); // 58
+        driver.pulse_sel(); // SEC -> MIN
+        driver.pulse_down(); // 59
+        driver.pulse_sel(); // MIN -> HOUR
+        repeat (10) driver.pulse_up(); // 10
+        driver.pulse_sel(); // HOUR -> RUN
+        scoreboard.check_time(10, 59, 58, "TC10_PART_B_SET_10_59_58");
+
+        @(posedge vif.sec_pulse);
+        @(posedge vif.clk); #1ns;
+        scoreboard.check_time(10, 59, 59, "TC10_PART_B_COUNT_10_59_59");
+
+        @(posedge vif.sec_pulse);
+        @(posedge vif.clk); #1ns;
+        scoreboard.check_time(11, 0, 0, "TC10_PART_B_HOUR_INC_11_00_00");
+
+        // ---------------------------------------------------------------------
+        // Part C: 23:59:59 to 00:00:00 Midnight Cascade Rollover
+        // ---------------------------------------------------------------------
+        log_info("Part C: Verifying midnight rollover (23:59:58 -> 00:00:00)...");
         driver.reset_dut(10);
         
         // 1. Navigate to ADJ_SEC mode: RUN -> SEC
@@ -456,6 +509,43 @@ module tb_hms_timer;
         $display("\n--------------------------------------------------------------------------------");
         $display(">>> TEST CASE 13: 5s Inactivity Timeout & Automatic Rollback Verification <<<");
         $display("--------------------------------------------------------------------------------");
+        
+        // -------------------------------------------------------------
+        // Sub-test 1: 5s Timeout in MODE_ADJ_SEC
+        // -------------------------------------------------------------
+        log_info("Sub-test 1: Verifying 5s Inactivity Timeout in MODE_ADJ_SEC...");
+        driver.reset_dut(10);
+        scoreboard.check_time(0, 0, 0, "TC13_SEC_INIT_TIME");
+        driver.pulse_sel(); // RUN -> ADJ_SEC
+        scoreboard.check_mode(MODE_ADJ_SEC, "TC13_ENTER_ADJ_SEC_1");
+        repeat (10) driver.pulse_up();
+        scoreboard.check_time(0, 0, 10, "TC13_SEC_EDITED_10");
+
+        // Idle for 5 seconds without button presses
+        repeat (5) @(posedge vif.sec_pulse);
+        repeat (3) @(posedge vif.clk); #1ns;
+        scoreboard.check_mode(MODE_RUN, "TC13_TIMEOUT_SEC_RETURN_TO_RUN");
+
+        // -------------------------------------------------------------
+        // Sub-test 2: 5s Timeout in MODE_ADJ_MIN
+        // -------------------------------------------------------------
+        log_info("Sub-test 2: Verifying 5s Inactivity Timeout in MODE_ADJ_MIN...");
+        driver.reset_dut(10);
+        driver.pulse_sel(); // RUN -> ADJ_SEC
+        driver.pulse_sel(); // ADJ_SEC -> ADJ_MIN
+        scoreboard.check_mode(MODE_ADJ_MIN, "TC13_ENTER_ADJ_MIN_2");
+        repeat (10) driver.pulse_up();
+        scoreboard.check_time(0, 10, 0, "TC13_MIN_EDITED_10");
+
+        // Idle for 5 seconds without button presses
+        repeat (5) @(posedge vif.sec_pulse);
+        repeat (3) @(posedge vif.clk); #1ns;
+        scoreboard.check_mode(MODE_RUN, "TC13_TIMEOUT_MIN_RETURN_TO_RUN");
+
+        // -------------------------------------------------------------
+        // Sub-test 3: 5s Timeout in MODE_ADJ_HOUR (Original Flow)
+        // -------------------------------------------------------------
+        log_info("Sub-test 3: Verifying 5s Inactivity Timeout in MODE_ADJ_HOUR...");
         driver.reset_dut(10);
         
         // Ensure starting at 00:00:00 in MODE_RUN
