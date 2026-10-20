@@ -14,7 +14,7 @@
 class hms_coverage;
     virtual hms_timer_if vif;
 
-    // Covergroup 1: FSM Operating Modes & Transitions
+    // Covergroup 1: FSM Operating Modes & Transitions (Including Timeout aborts)
     covergroup cg_fsm_modes @(posedge vif.clk);
         option.per_instance = 1;
         option.name = "cg_fsm_modes";
@@ -27,10 +27,12 @@ class hms_coverage;
         }
 
         cp_mode_transitions: coverpoint vif.adj_mode {
-            bins cycle_run_to_sec   = (MODE_RUN => MODE_ADJ_SEC);
-            bins cycle_sec_to_min   = (MODE_ADJ_SEC => MODE_ADJ_MIN);
-            bins cycle_min_to_hour  = (MODE_ADJ_MIN => MODE_ADJ_HOUR);
-            bins cycle_hour_to_run  = (MODE_ADJ_HOUR => MODE_RUN);
+            bins cycle_run_to_sec    = (MODE_RUN => MODE_ADJ_SEC);
+            bins cycle_sec_to_min    = (MODE_ADJ_SEC => MODE_ADJ_MIN);
+            bins cycle_min_to_hour   = (MODE_ADJ_MIN => MODE_ADJ_HOUR);
+            bins cycle_hour_to_run   = (MODE_ADJ_HOUR => MODE_RUN);
+            bins timeout_sec_to_run  = (MODE_ADJ_SEC => MODE_RUN);
+            bins timeout_min_to_run  = (MODE_ADJ_MIN => MODE_RUN);
         }
     endgroup
 
@@ -101,18 +103,41 @@ class hms_coverage;
 
         // Cross: Rollovers in RUN mode
         cross_rollover_run: cross cp_mode, cp_sec_roll, cp_min_roll {
-            // Ignore edit modes: inactivity timeout (5s) prevents waiting for background rollovers
             ignore_bins non_run_modes = binsof(cp_mode.a_s) || binsof(cp_mode.a_m) || binsof(cp_mode.a_h);
-            // Ignore physically illegal hardware condition: min_rollover requires sec_rollover
             ignore_bins illegal_min_without_sec = binsof(cp_sec_roll.inactive) && binsof(cp_min_roll.active);
+        }
+    endgroup
+
+    // Covergroup 4: Commit & Collision Cross Coverage
+    covergroup cg_commit_collision @(posedge vif.clk);
+        option.per_instance = 1;
+        option.name = "cg_commit_collision";
+
+        cp_load: coverpoint vif.load_en {
+            bins inactive = {0};
+            bins active   = {1};
+        }
+        cp_sec_pulse: coverpoint vif.sec_pulse {
+            bins inactive = {0};
+            bins active   = {1};
+        }
+        cp_sec_roll: coverpoint vif.sec_rollover {
+            bins inactive = {0};
+            bins active   = {1};
+        }
+
+        cross_load_pulse: cross cp_load, cp_sec_pulse;
+        cross_load_rollover: cross cp_load, cp_sec_roll {
+            ignore_bins illegal_load_and_rollover = binsof(cp_load.active) && binsof(cp_sec_roll.active);
         }
     endgroup
 
     function new(virtual hms_timer_if vif);
         this.vif = vif;
-        cg_fsm_modes       = new();
-        cg_time_values     = new();
-        cg_stimulus_cross  = new();
+        cg_fsm_modes        = new();
+        cg_time_values      = new();
+        cg_stimulus_cross   = new();
+        cg_commit_collision = new();
     endfunction
 
     function void report_coverage();
@@ -122,6 +147,7 @@ class hms_coverage;
         $display(" FSM Modes & Transitions Coverage : %0.2f %%", cg_fsm_modes.get_inst_coverage());
         $display(" Time Ranges & Boundary Coverage  : %0.2f %%", cg_time_values.get_inst_coverage());
         $display(" Stimulus & Cross Coverage        : %0.2f %%", cg_stimulus_cross.get_inst_coverage());
+        $display(" Commit & Collision Coverage      : %0.2f %%", cg_commit_collision.get_inst_coverage());
         $display("--------------------------------------------------------------------------------");
     endfunction
 

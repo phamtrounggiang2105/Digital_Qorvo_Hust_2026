@@ -35,6 +35,26 @@ class hms_driver;
         log_info("Reset released successfully.");
     endtask
 
+    // Asynchronous reset assert during master clock HIGH phase
+    task async_reset_clk_high();
+        wait(vif.clk === 1'b1);
+        #100ns;
+        vif.rstn <= 1'b0;
+        repeat (5) @(posedge vif.clk);
+        vif.rstn <= 1'b1;
+        repeat (2) @(posedge vif.clk);
+    endtask
+
+    // Asynchronous reset assert during master clock LOW phase
+    task async_reset_clk_low();
+        wait(vif.clk === 1'b0);
+        #100ns;
+        vif.rstn <= 1'b0;
+        repeat (5) @(posedge vif.clk);
+        vif.rstn <= 1'b1;
+        repeat (2) @(posedge vif.clk);
+    endtask
+
     // Wait N clock cycles
     task wait_cycles(int cycles);
         repeat (cycles) @(posedge vif.clk);
@@ -78,6 +98,41 @@ class hms_driver;
         repeat (post_delay) @(posedge vif.clk);
     endtask
 
+    // Simultaneous Select and Up Press
+    task pulse_sel_up_simultaneous(int pulse_width = 20, int post_delay = 25);
+        @(posedge vif.clk);
+        vif.sel_in <= 1'b1;
+        vif.up_in  <= 1'b1;
+        repeat (pulse_width) @(posedge vif.clk);
+        vif.sel_in <= 1'b0;
+        vif.up_in  <= 1'b0;
+        repeat (post_delay) @(posedge vif.clk);
+    endtask
+
+    // Simultaneous Select and Down Press
+    task pulse_sel_down_simultaneous(int pulse_width = 20, int post_delay = 25);
+        @(posedge vif.clk);
+        vif.sel_in   <= 1'b1;
+        vif.down_in <= 1'b1;
+        repeat (pulse_width) @(posedge vif.clk);
+        vif.sel_in   <= 1'b0;
+        vif.down_in <= 1'b0;
+        repeat (post_delay) @(posedge vif.clk);
+    endtask
+
+    // Simultaneous All Three Buttons Press
+    task pulse_all_three_simultaneous(int pulse_width = 20, int post_delay = 25);
+        @(posedge vif.clk);
+        vif.sel_in   <= 1'b1;
+        vif.up_in    <= 1'b1;
+        vif.down_in  <= 1'b1;
+        repeat (pulse_width) @(posedge vif.clk);
+        vif.sel_in   <= 1'b0;
+        vif.up_in    <= 1'b0;
+        vif.down_in  <= 1'b0;
+        repeat (post_delay) @(posedge vif.clk);
+    endtask
+
     // Inject narrow sub-cycle glitch (Metastability / Filter test)
     task inject_glitch(int glitch_duration_ns = 50);
         #10ns;
@@ -90,7 +145,7 @@ class hms_driver;
     // Navigate FSM to a specific target mode
     task set_mode(hms_mode_e target_mode);
         while (vif.adj_mode !== target_mode) begin
-            pulse_sel(20, 5);
+            pulse_sel(20, 25);
         end
     endtask
 

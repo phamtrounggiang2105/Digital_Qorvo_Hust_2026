@@ -72,6 +72,12 @@ module tb_hms_timer;
     assign vif.load_en        = dut.load_en;
     assign vif.sec_rollover   = dut.sec_rollover;
     assign vif.min_rollover   = dut.min_rollover;
+    assign vif.adj_sec        = dut.adj_sec;
+    assign vif.adj_min        = dut.adj_min;
+    assign vif.adj_hour       = dut.adj_hour;
+    assign vif.s_cnt          = dut.s_cnt;
+    assign vif.m_cnt          = dut.m_cnt;
+    assign vif.h_cnt          = dut.h_cnt;
 
     // Testbench OOP Components
     hms_driver     driver;
@@ -625,6 +631,269 @@ module tb_hms_timer;
         scoreboard.check_time(0, 0, 11, "TC14_VALUE_COMMITTED_SUCCESSFULLY");
     endtask
 
+    // TC15: Reset Active Corners & Asynchronous Injection Verification
+    task run_tc15_reset_corners();
+        $display("\n--------------------------------------------------------------------------------");
+        $display(">>> TEST CASE 15: Reset Active Corners & Asynchronous Injection <<<");
+        $display("--------------------------------------------------------------------------------");
+        
+        // 1. Async reset assert when clk is HIGH
+        log_info("Sub-test 1: Async reset assert during master clk HIGH phase...");
+        driver.async_reset_clk_high();
+        scoreboard.check_time(0, 0, 0, "TC15_ASYNC_RST_CLK_HIGH_TIME");
+        scoreboard.check_mode(MODE_RUN, "TC15_ASYNC_RST_CLK_HIGH_MODE");
+
+        // 2. Async reset assert when clk is LOW
+        log_info("Sub-test 2: Async reset assert during master clk LOW phase...");
+        driver.async_reset_clk_low();
+        scoreboard.check_time(0, 0, 0, "TC15_ASYNC_RST_CLK_LOW_TIME");
+        scoreboard.check_mode(MODE_RUN, "TC15_ASYNC_RST_CLK_LOW_MODE");
+
+        // 3. Reset assertion at Second Counter rollover boundary (s_cnt == 59, sec_pulse == 1)
+        log_info("Sub-test 3: Reset at Second counter rollover boundary (59)...");
+        driver.reset_dut(10);
+        repeat (58) @(posedge vif.sec_pulse);
+        @(posedge vif.sec_pulse); // At 59th second
+        vif.rstn <= 1'b0; // Assert reset right at boundary
+        repeat (5) @(posedge vif.clk);
+        vif.rstn <= 1'b1;
+        repeat (2) @(posedge vif.clk);
+        scoreboard.check_time(0, 0, 0, "TC15_RESET_AT_SEC_59");
+
+        // 4. Reset during active Debounce sequence (mid-count)
+        log_info("Sub-test 4: Reset during active debounce counting...");
+        vif.up_in <= 1'b1;
+        repeat (10) @(posedge vif.clk); // Halfway (10 pulses)
+        vif.rstn <= 1'b0; // Assert reset
+        repeat (5) @(posedge vif.clk);
+        vif.rstn <= 1'b1;
+        vif.up_in <= 1'b0;
+        repeat (2) @(posedge vif.clk);
+        scoreboard.check_time(0, 0, 0, "TC15_RESET_DURING_DEBOUNCE");
+
+        // 5. Reset during Inactivity Timeout countdown (at sec 4)
+        log_info("Sub-test 5: Reset during Inactivity Timeout countdown...");
+        driver.pulse_sel(); // Enter ADJ_SEC
+        scoreboard.check_mode(MODE_ADJ_SEC, "TC15_ENTER_ADJ_SEC");
+        repeat (4) @(posedge vif.sec_pulse); // 4 seconds elapsed
+        vif.rstn <= 1'b0;
+        repeat (5) @(posedge vif.clk);
+        vif.rstn <= 1'b1;
+        repeat (2) @(posedge vif.clk);
+        scoreboard.check_mode(MODE_RUN, "TC15_RESET_DURING_TIMEOUT_MODE");
+        scoreboard.check_time(0, 0, 0, "TC15_RESET_DURING_TIMEOUT_TIME");
+    endtask
+
+    // TC16: Prescaler Pulse Precision & Deadlock Freedom
+    task run_tc16_prescaler_precision();
+        $display("\n--------------------------------------------------------------------------------");
+        $display(">>> TEST CASE 16: Prescaler Pulse Precision & Deadlock Freedom <<<");
+        $display("--------------------------------------------------------------------------------");
+        driver.reset_dut(10);
+        
+        log_info("Observing 5 sec_pulses for pulse width compliance...");
+        repeat (5) begin
+            @(posedge vif.sec_pulse);
+            @(posedge vif.clk); #1ns;
+            assert (vif.sec_pulse === 1'b0) else $error("[FAIL] sec_pulse held for > 1 clock cycle!");
+        end
+        scoreboard.check_time(0, 0, 5, "TC16_PRESCALER_5S_CONTINUOUS");
+    endtask
+
+    // TC17: Debounce Corners, Release Qualification & SEL Priority
+    task run_tc17_debounce_corners();
+        $display("\n--------------------------------------------------------------------------------");
+        $display(">>> TEST CASE 17: Debounce Corners, Release Qualification & Priorities <<<");
+        $display("--------------------------------------------------------------------------------");
+        driver.reset_dut(10);
+
+        // 1. Release qualification: Short release (< 20 pulses) is ignored
+        log_info("Sub-test 1: Short release (< 20 pulses) ignored while held...");
+        driver.set_mode(MODE_ADJ_SEC);
+        vif.up_in <= 1'b1;
+        repeat (25) @(posedge vif.clk); // Press accepted, s_out = 1
+        vif.up_in <= 1'b0; // Release briefly
+        repeat (10) @(posedge vif.clk); // 10 pulses (< 20)
+        vif.up_in <= 1'b1; // Press again
+        repeat (25) @(posedge vif.clk);
+        vif.up_in <= 1'b0;
+        repeat (25) @(posedge vif.clk); // Full release
+        scoreboard.check_time(0, 0, 1, "TC17_SHORT_RELEASE_REJECTION");
+
+        // 2. Full release (>= 20 pulses) enables next press
+        log_info("Sub-test 2: Full release (>= 20 pulses) qualifies second press...");
+        driver.pulse_up(25, 25);
+        scoreboard.check_time(0, 0, 2, "TC17_FULL_RELEASE_SECOND_PRESS");
+
+        // 3. SEL + UP simultaneous in edit mode: SEL priority over UP
+        log_info("Sub-test 3: Simultaneous SEL + UP in edit mode (SEL priority)...");
+        driver.pulse_sel_up_simultaneous(25, 25);
+        scoreboard.check_mode(MODE_ADJ_MIN, "TC17_SEL_UP_PRIORITY_MODE");
+        scoreboard.check_time(0, 0, 2, "TC17_SEL_UP_PRIORITY_VAL_SEC");
+
+        // 4. SEL + DOWN simultaneous in edit mode: SEL priority over DOWN
+        log_info("Sub-test 4: Simultaneous SEL + DOWN in edit mode (SEL priority)...");
+        driver.pulse_sel_down_simultaneous(25, 25);
+        scoreboard.check_mode(MODE_ADJ_HOUR, "TC17_SEL_DOWN_PRIORITY_MODE");
+        scoreboard.check_time(0, 0, 2, "TC17_SEL_DOWN_PRIORITY_VAL_MIN");
+
+        // 5. All three buttons simultaneous press
+        log_info("Sub-test 5: Simultaneous all 3 buttons press...");
+        driver.pulse_all_three_simultaneous(25, 25);
+        scoreboard.check_mode(MODE_RUN, "TC17_ALL_THREE_PRIORITY_MODE");
+    endtask
+
+    // TC18: Wrap-Around Boundaries, Buffer Isolation & Snapshot
+    task run_tc18_wrap_and_isolation();
+        $display("\n--------------------------------------------------------------------------------");
+        $display(">>> TEST CASE 18: Wrap Boundaries, Buffer Isolation & Snapshot <<<");
+        $display("--------------------------------------------------------------------------------");
+        driver.reset_dut(10);
+
+        // 1. Snapshot capture: run to 00:00:15, then enter ADJ_SEC
+        log_info("Sub-test 1: Snapshot capture on entering ADJ_SEC...");
+        repeat (15) @(posedge vif.sec_pulse);
+        driver.pulse_sel(); // Enter ADJ_SEC
+        scoreboard.check_mode(MODE_ADJ_SEC, "TC18_ENTER_ADJ_SEC");
+        scoreboard.check_time(0, 0, 15, "TC18_SNAPSHOT_CAPTURED");
+
+        // 2. Second underflow wrap: 15 down to 0, then 0 -> 59
+        log_info("Sub-test 2: Second underflow wrap 00 -> 59...");
+        repeat (15) driver.pulse_down();
+        scoreboard.check_time(0, 0, 0, "TC18_SEC_ZERO");
+        driver.pulse_down(); // 0 -> 59
+        scoreboard.check_time(0, 0, 59, "TC18_SEC_UNDERFLOW_59");
+
+        // 3. Buffer isolation: Minute and Hour must still be 0
+        driver.pulse_sel(); // Enter ADJ_MIN
+        scoreboard.check_mode(MODE_ADJ_MIN, "TC18_ENTER_ADJ_MIN");
+        scoreboard.check_time(0, 0, 59, "TC18_MIN_ISOLATION_INITIAL");
+
+        // 4. Minute underflow wrap: 00 -> 59
+        log_info("Sub-test 3: Minute underflow wrap 00 -> 59...");
+        driver.pulse_down();
+        scoreboard.check_time(0, 59, 59, "TC18_MIN_UNDERFLOW_59");
+
+        // 5. Hour overflow wrap: 00 -> 23 on DOWN, and 23 -> 00 on UP
+        driver.pulse_sel(); // Enter ADJ_HOUR
+        scoreboard.check_mode(MODE_ADJ_HOUR, "TC18_ENTER_ADJ_HOUR");
+        scoreboard.check_time(0, 59, 59, "TC18_HOUR_ISOLATION_INITIAL");
+        log_info("Sub-test 4: Hour underflow 00 -> 23 and overflow 23 -> 00...");
+        driver.pulse_down(); // 0 -> 23
+        scoreboard.check_time(23, 59, 59, "TC18_HOUR_UNDERFLOW_23");
+        driver.pulse_up(); // 23 -> 0
+        scoreboard.check_time(0, 59, 59, "TC18_HOUR_OVERFLOW_00");
+
+        // 6. Data persistence across menu: change hour to 10 and commit
+        repeat (10) driver.pulse_up();
+        scoreboard.check_time(10, 59, 59, "TC18_HOUR_SET_10");
+        @(posedge vif.sec_pulse);
+        driver.pulse_sel(20, 10); // HOUR -> RUN (Commit)
+        scoreboard.check_mode(MODE_RUN, "TC18_COMMIT_RUN");
+        scoreboard.check_time(10, 59, 59, "TC18_COMMIT_ALL_FIELDS_COMMITTED");
+    endtask
+
+    // TC19: Synchronous Commit Collisions, Priority & Glitchless MUX
+    task run_tc19_commit_collision_and_priority();
+        $display("\n--------------------------------------------------------------------------------");
+        $display(">>> TEST CASE 19: Commit Collisions, Priority & Glitchless MUX <<<");
+        $display("--------------------------------------------------------------------------------");
+        driver.reset_dut(10);
+
+        // 1. Commit load priority over sec_pulse
+        log_info("Sub-test 1: Commit collision with sec_pulse...");
+        driver.set_mode(MODE_ADJ_HOUR);
+        repeat (5) driver.pulse_up(); // Hour = 5
+        @(posedge vif.clk);
+        wait (dut.u_clk_prescaler.r_cnt_1hz == 76);
+        vif.sel_in <= 1'b1;
+        repeat (25) @(posedge vif.clk);
+        vif.sel_in <= 1'b0;
+        repeat (25) @(posedge vif.clk);
+        scoreboard.check_mode(MODE_RUN, "TC19_COMMIT_MODE_RUN");
+
+        // 2. Counting resumption from committed value
+        log_info("Sub-test 2: Counting resumption from committed value...");
+        @(posedge vif.sec_pulse);
+        @(posedge vif.clk); #1ns;
+        scoreboard.check_time(5, 0, 1, "TC19_RESUMPTION_COUNTING");
+    endtask
+
+    // TC20: Timeout Corners & Collision with 5th sec_pulse
+    task run_tc20_timeout_corners_and_collision();
+        $display("\n--------------------------------------------------------------------------------");
+        $display(">>> TEST CASE 20: Timeout Corners & 5th sec_pulse Collision <<<");
+        $display("--------------------------------------------------------------------------------");
+        driver.reset_dut(10);
+
+        // 1. Keep-alive via DOWN button at 4th second
+        log_info("Sub-test 1: Keep-alive via DOWN button at 4th second...");
+        driver.pulse_sel(); // Enter ADJ_SEC
+        repeat (4) @(posedge vif.sec_pulse);
+        scoreboard.check_mode(MODE_ADJ_SEC, "TC20_STILL_IN_ADJ_SEC_AT_4S");
+        driver.pulse_down(); // DOWN keep-alive
+        repeat (3) @(posedge vif.sec_pulse);
+        scoreboard.check_mode(MODE_ADJ_SEC, "TC20_ALIVE_AFTER_DOWN_KEEPALIVE");
+
+        // 2. Keep-alive via SEL button mode advance
+        log_info("Sub-test 2: Keep-alive via SEL mode advance...");
+        driver.pulse_sel(); // Advance to ADJ_MIN
+        scoreboard.check_mode(MODE_ADJ_MIN, "TC20_ADVANCED_TO_ADJ_MIN");
+        repeat (3) @(posedge vif.sec_pulse);
+        scoreboard.check_mode(MODE_ADJ_MIN, "TC20_MIN_ALIVE_AT_3S");
+
+        // 3. Collision: button press at exact cycle of 5th sec_pulse
+        log_info("Sub-test 3: Button press collision at 5th sec_pulse (Keep-alive wins)...");
+        @(posedge vif.sec_pulse); // 4th pulse
+        repeat (78) @(posedge vif.clk); // Wait until 20 cycles before 5th pulse
+        vif.up_in <= 1'b1;
+        repeat (22) @(posedge vif.clk);
+        vif.up_in <= 1'b0;
+        repeat (10) @(posedge vif.clk);
+        scoreboard.check_mode(MODE_ADJ_MIN, "TC20_KEEPALIVE_WINS_ON_COLLISION");
+
+        // Natural timeout rollback
+        log_info("Sub-test 4: Natural timeout rollback...");
+        repeat (6) @(posedge vif.sec_pulse);
+        scoreboard.check_mode(MODE_RUN, "TC20_TIMEOUT_NATURAL_EXIT_TO_RUN");
+    endtask
+
+    // TC21: End-to-End Complete Scenarios & Midnight Commit Cascade
+    task run_tc21_e2e_scenarios();
+        $display("\n--------------------------------------------------------------------------------");
+        $display(">>> TEST CASE 21: End-to-End Scenarios & Midnight Commit Cascade <<<");
+        $display("--------------------------------------------------------------------------------");
+        driver.reset_dut(10);
+
+        // 1. Commit before midnight: set to 23:59:58, commit, verify cascade to 00:00:00
+        log_info("Sub-test 1: E2E Commit 23:59:58 and cascade across midnight...");
+        driver.pulse_sel(); // SEC
+        repeat (58) driver.pulse_up();
+        driver.pulse_sel(); // MIN
+        repeat (59) driver.pulse_up();
+        driver.pulse_sel(); // HOUR
+        repeat (23) driver.pulse_up();
+        @(posedge vif.sec_pulse);
+        driver.pulse_sel(20, 10); // Commit to RUN
+        scoreboard.check_mode(MODE_RUN, "TC21_MIDNIGHT_COMMIT_RUN");
+        scoreboard.check_time(23, 59, 58, "TC21_COMMITTED_23_59_58");
+
+        // Let it tick 1s -> 23:59:59
+        @(posedge vif.sec_pulse);
+        @(posedge vif.clk); #1ns;
+        scoreboard.check_time(23, 59, 59, "TC21_MIDNIGHT_MINUS_ONE");
+
+        // Let it tick 1s -> 00:00:00 (Midnight Cascade)
+        @(posedge vif.sec_pulse);
+        @(posedge vif.clk); #1ns;
+        scoreboard.check_time(0, 0, 0, "TC21_MIDNIGHT_CASCADE_00_00_00");
+
+        // Tick 1s -> 00:00:01
+        @(posedge vif.sec_pulse);
+        @(posedge vif.clk); #1ns;
+        scoreboard.check_time(0, 0, 1, "TC21_NEW_DAY_TICK_ONE");
+    endtask
+
     //==========================================================================
     // Main Testbench Process
     //==========================================================================
@@ -653,6 +922,15 @@ module tb_hms_timer;
         run_tc12_button_debouncer_and_autorepeat();
         run_tc13_inactivity_timeout_rollback();
         run_tc14_inactivity_keepalive();
+
+        // Execute Extended Test Suite (TC15 to TC21)
+        run_tc15_reset_corners();
+        run_tc16_prescaler_precision();
+        run_tc17_debounce_corners();
+        run_tc18_wrap_and_isolation();
+        run_tc19_commit_collision_and_priority();
+        run_tc20_timeout_corners_and_collision();
+        run_tc21_e2e_scenarios();
 
         // Print Coverage and Scorecard Reports
         driver.wait_cycles(10);
