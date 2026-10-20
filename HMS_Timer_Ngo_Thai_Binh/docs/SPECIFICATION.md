@@ -711,7 +711,8 @@ Giản đồ thời gian chuyển mạch hiển thị không độ trễ giữa 
 | **Độ bao phủ câu lệnh RTL (Statement Coverage)** | 127 | 126 | 1 | **99.21%** |
 | **Độ bao phủ nhánh RTL (Branch Coverage)** | 138 | 133 | 5 | **96.37%** |
 | **Độ bao phủ điều kiện RTL (Condition Coverage)** | 37 | 37 | 0 | **100.0%** |
+| **Độ bao phủ biểu thức RTL (Expression Coverage)** | 11 | 8 | 3 | **72.72%** |
 | **Tổng số SVA SystemVerilog Assertions** | 6 | 6 | 0 | **100.0%** |
 | **Trạng thái kiểm chứng tổng thể** | - | - | - | **PASSED (TAPE-OUT READY)** |
 
-*Ghi chú: Kết quả kiểm chứng đạt 100% Passed trên bộ 14 Functional Test Cases với 102/102 Assertions & Checks thành công, Functional Coverage đạt tuyệt đối 100.00%.*
+*Ghi chú: Kết quả kiểm chứng đạt 100% Passed trên bộ 14 Functional Test Cases với 102/102 Assertions & Checks thành công, Functional Coverage đạt tuyệt đối 100.00%, Condition Coverage đạt tuyệt đối 100.00%, Overall Coverage đạt 96.03%. Các điểm chưa phủ thuộc về nhánh phòng thủ an toàn (safe-state FSM default) và ràng buộc phụ thuộc liên khối đã được giải trình chi tiết theo chuẩn sign-off.*
