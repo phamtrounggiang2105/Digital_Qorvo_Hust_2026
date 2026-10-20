@@ -145,20 +145,21 @@ module mode_controller #(
                     if (any_button) begin
                         timeout_cnt <= '0; // Reset inactivity timer on user action
                         if (!sel_pulse) begin
-                            if (up_pulse && !down_pulse) begin
+                            if (up_pulse && down_pulse) begin
+                                // Simultaneous press conflict: hold current value
+                            end else if (up_pulse) begin
                                 if (r_adj_sec >= 6'd59) begin
                                     r_adj_sec <= '0;
                                 end else begin
                                     r_adj_sec <= r_adj_sec + 1'b1;
                                 end
-                            end else if (down_pulse && !up_pulse) begin
+                            end else begin
                                 if (r_adj_sec == '0) begin
                                     r_adj_sec <= 6'd59;
                                 end else begin
                                     r_adj_sec <= r_adj_sec - 1'b1;
                                 end
                             end
-                            // If both up_pulse and down_pulse are active, hold value
                         end
                     end else if (sec_pulse) begin
                         if (timeout_cnt >= (P_TIMEOUT_SEC - 1)) begin
@@ -173,20 +174,21 @@ module mode_controller #(
                     if (any_button) begin
                         timeout_cnt <= '0; // Reset inactivity timer on user action
                         if (!sel_pulse) begin
-                            if (up_pulse && !down_pulse) begin
+                            if (up_pulse && down_pulse) begin
+                                // Simultaneous press conflict: hold current value
+                            end else if (up_pulse) begin
                                 if (r_adj_min >= 6'd59) begin
                                     r_adj_min <= '0;
                                 end else begin
                                     r_adj_min <= r_adj_min + 1'b1;
                                 end
-                            end else if (down_pulse && !up_pulse) begin
+                            end else begin
                                 if (r_adj_min == '0) begin
                                     r_adj_min <= 6'd59;
                                 end else begin
                                     r_adj_min <= r_adj_min - 1'b1;
                                 end
                             end
-                            // If both up_pulse and down_pulse are active, hold value
                         end
                     end else if (sec_pulse) begin
                         if (timeout_cnt >= (P_TIMEOUT_SEC - 1)) begin
@@ -205,20 +207,21 @@ module mode_controller #(
                             r_load_en   <= 1'b1; // Trigger parallel load to counters
                             timeout_cnt <= '0;
                         end else begin
-                            if (up_pulse && !down_pulse) begin
+                            if (up_pulse && down_pulse) begin
+                                // Simultaneous press conflict: hold current value
+                            end else if (up_pulse) begin
                                 if (r_adj_hour >= 5'd23) begin
                                     r_adj_hour <= '0;
                                 end else begin
                                     r_adj_hour <= r_adj_hour + 1'b1;
                                 end
-                            end else if (down_pulse && !up_pulse) begin
+                            end else begin
                                 if (r_adj_hour == '0) begin
                                     r_adj_hour <= 5'd23;
                                 end else begin
                                     r_adj_hour <= r_adj_hour - 1'b1;
                                 end
                             end
-                            // If both up_pulse and down_pulse are active, hold value
                         end
                     end else if (sec_pulse) begin
                         if (timeout_cnt >= (P_TIMEOUT_SEC - 1)) begin

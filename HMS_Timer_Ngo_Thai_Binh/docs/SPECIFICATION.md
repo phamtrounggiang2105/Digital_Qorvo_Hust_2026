@@ -710,7 +710,7 @@ Giản đồ thời gian chuyển mạch hiển thị không độ trễ giữa 
 | **Độ bao phủ tổng thể Covergroups (Functional)** | 54 bins | 54 | 0 | **100.0%** |
 | **Độ bao phủ câu lệnh RTL (Statement Coverage)** | 127 | 126 | 1 | **99.21%** |
 | **Độ bao phủ nhánh RTL (Branch Coverage)** | 138 | 133 | 5 | **96.37%** |
-| **Độ bao phủ điều kiện RTL (Condition Coverage)** | 43 | 40 | 3 | **93.02%** |
+| **Độ bao phủ điều kiện RTL (Condition Coverage)** | 37 | 37 | 0 | **100.0%** |
 | **Tổng số SVA SystemVerilog Assertions** | 6 | 6 | 0 | **100.0%** |
 | **Trạng thái kiểm chứng tổng thể** | - | - | - | **PASSED (TAPE-OUT READY)** |
 
