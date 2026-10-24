@@ -39,15 +39,21 @@ TB_SRCS    = $(TB_DIR)/hms_timer_types_pkg.sv \
 
 # Top Testbench Module
 TB_TOP     = tb_hms_timer
+TEST      ?= all
 
 # Compilation flags
-VLOG_FLAGS = -sv -timescale "1ns/1ps" +acc -lint +incdir+$(TB_DIR) -work $(WORK_LIB)
+VLOG_FLAGS = -sv -timescale "1ns/1ps" +acc -lint +incdir+$(TB_DIR) +incdir+$(TB_DIR)/tests -work $(WORK_LIB)
 COV_FLAGS  = +cover=bcesf
 
 # Simulation flags
-VSIM_FLAGS = -c -work $(WORK_LIB) $(TB_TOP) -do "run -all; quit -f"
+VSIM_FLAGS = -c -work $(WORK_LIB) $(TB_TOP) +TESTNAME=$(TEST) -do "run -all; quit -f"
 
-.PHONY: all compile sim run wave cov clean help verilator_test synth flow clean-synth
+# Detailed Coverage Report flags for vcover (source annotation, details, all covergroups and bins)
+VCOVER_DETAIL_FLAGS = -details -annotate -assert -cvg -codeAll \
+                      -showexcluded -nocompactcrossbins \
+                      -threshH 90 -threshL 70
+
+.PHONY: all compile sim run wave cov cov-view cov-view-cvg clean help verilator_test synth flow clean-synth
 
 all: compile sim
 
@@ -60,7 +66,9 @@ help:
 	@echo "  make sim         : Run batch simulation and display test scorecard"
 	@echo "  make all         : Compile and run simulation (default)"
 	@echo "  make wave        : Run simulation with waveform viewer (GUI mode)"
-	@echo "  make cov         : Compile with code/func coverage and gen report"
+	@echo "  make cov         : Compile with code/func coverage and gen detailed report"
+	@echo "  make cov-view    : Open HTML coverage report in web browser"
+	@echo "  make cov-view-cvg: Open Functional Coverage & Bins page directly in browser"
 	@echo "  make synth       : Run OpenLane 2 Logic Synthesis (Yosys + Sky130)"
 	@echo "  make flow        : Run Full OpenLane 2 ASIC Flow (RTL -> GDSII)"
 	@echo "  make clean-synth : Clean OpenLane runs artifacts"
@@ -85,7 +93,7 @@ sim: compile
 	@echo "-----------------------------------------------------------------"
 	@echo ">>> Running Simulation with QuestaSim vsim... <<<"
 	@echo "-----------------------------------------------------------------"
-	$(VSIM) -c -work $(WORK_LIB) $(TB_TOP) -do "run -all; quit -f" -l $(SIM_DIR)/sim.log
+	$(VSIM) $(VSIM_FLAGS) -l $(SIM_DIR)/sim.log
 
 run: sim
 
@@ -106,10 +114,34 @@ cov: $(WORK_LIB)
 	$(VLOG) $(VLOG_FLAGS) $(TB_SRCS)
 	@echo ">>> Running Simulation with Coverage Collection... <<<"
 	$(VSIM) -c -coverage -work $(WORK_LIB) $(TB_TOP) -do "coverage save -onexit $(SIM_DIR)/hms_cov.ucdb; run -all; quit -f" -l $(SIM_DIR)/sim_cov.log
-	@echo ">>> Generating HTML Coverage Report... <<<"
-	$(VCOVER) report -html -output $(SIM_DIR)/cov_html $(SIM_DIR)/hms_cov.ucdb
+	@echo ">>> Generating Detailed HTML Coverage Report (with Source Annotation)... <<<"
+	$(VCOVER) report -html -output $(SIM_DIR)/cov_html $(VCOVER_DETAIL_FLAGS) $(SIM_DIR)/hms_cov.ucdb
+	@echo ">>> Generating Text Coverage Reports... <<<"
+	$(VCOVER) report -summary $(SIM_DIR)/hms_cov.ucdb -output $(SIM_DIR)/cov_summary.txt
+	$(VCOVER) report -details -zeros -codeAll $(SIM_DIR)/hms_cov.ucdb -output $(SIM_DIR)/cov_details.txt
+	$(VCOVER) report -cvg -details $(SIM_DIR)/hms_cov.ucdb -output $(SIM_DIR)/cov_functional.txt
+	@echo "-----------------------------------------------------------------"
 	@echo ">>> Overall Coverage Summary: <<<"
-	$(VCOVER) report -summary $(SIM_DIR)/hms_cov.ucdb
+	@echo "-----------------------------------------------------------------"
+	@cat $(SIM_DIR)/cov_summary.txt
+	@echo "-----------------------------------------------------------------"
+	@echo "Coverage HTML Report generated at: $(SIM_DIR)/cov_html/index.html"
+	@echo "Functional Coverage Page at: $(SIM_DIR)/cov_html/cvg.html"
+	@echo "Coverage Details Text generated at: $(SIM_DIR)/cov_details.txt"
+	@echo "Functional Bins Text generated at: $(SIM_DIR)/cov_functional.txt"
+	@echo "Run 'make cov-view' to open report in browser."
+	@echo "Run 'make cov-view-cvg' to open Functional Coverage & Bins page."
+	@echo "-----------------------------------------------------------------"
+
+# Open Coverage HTML in default browser
+cov-view:
+	@echo ">>> Opening Coverage Report in browser: $(SIM_DIR)/cov_html/index.html <<<"
+	@xdg-open $(SIM_DIR)/cov_html/index.html > /dev/null 2>&1 &
+
+# Open Functional Coverage (Covergroups & Bins) page directly
+cov-view-cvg:
+	@echo ">>> Opening Functional Coverage Bins in browser: $(SIM_DIR)/cov_html/cvg.html <<<"
+	@xdg-open $(SIM_DIR)/cov_html/cvg.html > /dev/null 2>&1 &
 
 # Verilator lint check
 verilator_test:

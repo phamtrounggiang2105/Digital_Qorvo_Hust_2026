@@ -1,0 +1,104 @@
+<mxfile host="Electron">
+  <diagram name="Page-1" id="diag_3_2_verification_methodology">
+    <mxGraphModel dx="1538" dy="765" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1450" pageHeight="820" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="tb_top_box" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;strokeWidth=2;dashed=1;dashPattern=8 4;" value="" vertex="1">
+          <mxGeometry height="720" width="1350" x="50" y="50" as="geometry" />
+        </mxCell>
+        <mxCell id="tb_top_title" parent="1" style="text;html=1;align=left;verticalAlign=middle;fontSize=16;fontStyle=1;fontFamily=Helvetica;fontColor=#000000;" value="tb_hms_timer (SystemVerilog Verification Environment Top)" vertex="1">
+          <mxGeometry height="30" width="600" x="70" y="60" as="geometry" />
+        </mxCell>
+        <mxCell id="box_tests" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;strokeWidth=1.5;align=left;verticalAlign=top;spacingLeft=10;spacingTop=8;fontSize=12;fontFamily=Helvetica;fontColor=#000000;" value="&lt;b&gt;tb/tests/*.sv (6 Phân Hệ Kiểm Thử - 133 Items)&lt;/b&gt;&#xa;• tc_sec1_reset_clock.sv (26 items)&#xa;• tc_sec2_button_debouncer.sv (26 items)&#xa;• tc_sec3_fsm_timeout.sv (22 items)&#xa;• tc_sec4_buffers_display.sv (18 items)&#xa;• tc_sec5_counters_cascade.sv (21 items)&#xa;• tc_sec6_integration_sva.sv (20 items)" vertex="1">
+          <mxGeometry height="150" width="320" x="120" y="120" as="geometry" />
+        </mxCell>
+        <mxCell id="box_driver" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;strokeWidth=1.5;align=left;verticalAlign=top;spacingLeft=10;spacingTop=8;fontSize=12;fontFamily=Helvetica;fontColor=#000000;" value="&lt;b&gt;hms_driver (Stimulus Driver Class)&lt;/b&gt;&#xa;• Điều khiển chuỗi khởi tạo &amp; giải trừ Reset&#xa;• Bơm xung nút bấm &amp; kiểm tra khử rung 20ms&#xa;• Kích thích xung đột UP + DOWN đồng thời&#xa;• Điều hòa nhịp Inactivity Timeout 5 giây" vertex="1">
+          <mxGeometry height="110" width="320" x="120" y="320" as="geometry" />
+        </mxCell>
+        <mxCell id="box_if" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;strokeWidth=2;align=center;verticalAlign=top;spacingTop=8;fontSize=14;fontStyle=1;fontFamily=Helvetica;fontColor=#000000;" value="hms_timer_if (SystemVerilog Virtual Interface)" vertex="1">
+          <mxGeometry height="610" width="340" x="540" y="120" as="geometry" />
+        </mxCell>
+        <mxCell id="box_cb_drv" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;strokeWidth=1;align=left;verticalAlign=top;spacingLeft=8;spacingTop=6;fontSize=11;fontFamily=Helvetica;fontColor=#000000;" value="&lt;b&gt;Clocking Block: cb_drv&lt;/b&gt;&#xa;• Timing skew: #1step (Race-free driving)&#xa;• Ngõ ra điều khiển: rstn, sel_in, up_in, down_in" vertex="1">
+          <mxGeometry height="75" width="300" x="560" y="165" as="geometry" />
+        </mxCell>
+        <mxCell id="box_sva" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;strokeWidth=1;align=left;verticalAlign=top;spacingLeft=8;spacingTop=6;fontSize=11;fontFamily=Helvetica;fontColor=#000000;" value="&lt;b&gt;24 Concurrent Assertions (SVA Protocol Checkers)&lt;/b&gt;&#xa;• Giám sát dải biên giá trị ngõ ra (s_out, m_out, h_out)&#xa;• Giám sát độ rộng 1 chu kỳ của các xung Clock Enable&#xa;• Giám sát tính hợp lệ của trạng thái FSM (Legal States)&#xa;• Giám sát khóa cờ tràn khi nạp song song (&amp; ~load_en)&#xa;• Giám sát giữ nguyên giá trị khi không có xung enable&#xa;• Giám sát triệt tiêu glitch hiển thị của output_switch" vertex="1">
+          <mxGeometry height="150" width="300" x="560" y="265" as="geometry" />
+        </mxCell>
+        <mxCell id="box_cb_mon" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;strokeWidth=1;align=left;verticalAlign=top;spacingLeft=8;spacingTop=6;fontSize=11;fontFamily=Helvetica;fontColor=#000000;" value="&lt;b&gt;Clocking Block: cb_mon &amp; Probes&lt;/b&gt;&#xa;• Lấy mẫu ngõ ra: s_out, m_out, h_out&#xa;• Probe tín hiệu nội bộ: adj_mode, load_en, sec_pulse,&#xa;  sel_pulse, up_pulse, down_pulse, sec_rollover" vertex="1">
+          <mxGeometry height="85" width="300" x="560" y="440" as="geometry" />
+        </mxCell>
+        <mxCell id="box_clk_rst" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;strokeWidth=1;align=left;verticalAlign=top;spacingLeft=8;spacingTop=6;fontSize=11;fontFamily=Helvetica;fontColor=#000000;" value="&lt;b&gt;Xung Nhịp Master &amp; Reset Ngoại Vi&lt;/b&gt;&#xa;• clk: 1 MHz Master Clock&#xa;• rstn: Active-low Asynchronous Reset" vertex="1">
+          <mxGeometry height="65" width="300" x="560" y="550" as="geometry" />
+        </mxCell>
+        <mxCell id="box_dut" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;strokeWidth=2;align=left;verticalAlign=top;spacingLeft=10;spacingTop=8;fontSize=12;fontFamily=Helvetica;fontColor=#000000;" value="&lt;b&gt;hms_timer (DUT - RTL Top Under Verification)&lt;/b&gt;&#xa;Universal Synchronous Architecture (1 MHz clk)&#xa;• u_reset_sync (2-Stage FF Synchronizer)&#xa;• u_clk_prescaler (1 MHz -&gt; pulse_1khz -&gt; sec_pulse)&#xa;• u_button_controller (3-Channel Debouncer 20ms)&#xa;• u_mode_controller (4-State FSM + Timeout 5s)&#xa;• u_second_counter (Mod-60 Real-Time Background)&#xa;• u_minute_counter (Mod-60 Real-Time Background)&#xa;• u_hour_counter (Mod-24 Real-Time Background)&#xa;• u_output_switch (Combinational Display MUX)" vertex="1">
+          <mxGeometry height="230" width="370" x="980" y="120" as="geometry" />
+        </mxCell>
+        <mxCell id="box_scb" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;strokeWidth=1.5;align=left;verticalAlign=top;spacingLeft=10;spacingTop=8;fontSize=12;fontFamily=Helvetica;fontColor=#000000;" value="&lt;b&gt;hms_scoreboard (Golden Model &amp; Checker)&lt;/b&gt;&#xa;• Mô hình tham chiếu chu kỳ chính xác (Cycle-accurate)&#xa;• Tính toán giá trị thời gian và chế độ kỳ vọng độc lập&#xa;• check_time(h, m, s, tag) &amp; check_mode(exp, tag)&#xa;• Zero-tolerance mismatch checker&#xa;&lt;b&gt;• Kết quả: 367 / 367 Checks Passed (100.0%)&lt;/b&gt;" vertex="1">
+          <mxGeometry height="140" width="370" x="980" y="380" as="geometry" />
+        </mxCell>
+        <mxCell id="box_cov" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;strokeWidth=1.5;align=left;verticalAlign=top;spacingLeft=10;spacingTop=8;fontSize=12;fontFamily=Helvetica;fontColor=#000000;" value="&lt;b&gt;hms_coverage (Functional Coverage Model)&lt;/b&gt;&#xa;• cg_fsm_modes (15 bins: states, loops, aborts, rst)&#xa;• cg_time_values (15 bins: zero, mid, max, wraps)&#xa;• cg_stimulus_cross (31 bins: mode x UP x DOWN)&#xa;• cg_commit_collision (13 bins: load_en x rollover)&#xa;&lt;b&gt;• Kết quả: 74 / 74 Bins Covered (100.00%)&lt;/b&gt;" vertex="1">
+          <mxGeometry height="140" width="370" x="980" y="550" as="geometry" />
+        </mxCell>
+        <mxCell id="arr_tests_drv" edge="1" parent="1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#000000;strokeWidth=1.5;endArrow=classic;endFill=1;">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="280" y="270" as="sourcePoint" />
+            <mxPoint x="280" y="320" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="lbl_tests_drv" parent="1" style="text;html=1;align=center;verticalAlign=middle;fontSize=10;fontFamily=Helvetica;fontColor=#000000;fillColor=#ffffff;" value="Gọi Kịch Bản Test Task" vertex="1">
+          <mxGeometry height="20" width="140" x="210" y="285" as="geometry" />
+        </mxCell>
+        <mxCell id="arr_drv_cb" edge="1" parent="1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#000000;strokeWidth=1.5;endArrow=classic;endFill=1;">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="490" y="375" />
+              <mxPoint x="490" y="200" />
+            </Array>
+            <mxPoint x="440" y="375" as="sourcePoint" />
+            <mxPoint x="560" y="200" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="lbl_drv_cb" parent="1" style="text;html=1;align=center;verticalAlign=middle;fontSize=10;fontFamily=Helvetica;fontColor=#000000;fillColor=#ffffff;" value="Phát Kích Thích&#xa;(Stimulus)" vertex="1">
+          <mxGeometry height="30" width="80" x="445" y="270" as="geometry" />
+        </mxCell>
+        <mxCell id="arr_cb_dut" edge="1" parent="1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#000000;strokeWidth=1.5;endArrow=classic;endFill=1;">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="860" y="200" as="sourcePoint" />
+            <mxPoint x="980" y="200" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="lbl_cb_dut" parent="1" style="text;html=1;align=center;verticalAlign=bottom;fontSize=10;fontFamily=Helvetica;fontColor=#000000;" value="sel_in, up_in,&amp;nbsp;&lt;div&gt;down_in, rstn&lt;/div&gt;" vertex="1">
+          <mxGeometry height="20" width="110" x="865" y="175" as="geometry" />
+        </mxCell>
+        <mxCell id="arr_dut_mon" edge="1" parent="1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#000000;strokeWidth=1.5;endArrow=classic;endFill=1;">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="980" y="310" as="sourcePoint" />
+            <mxPoint x="860" y="310" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="lbl_dut_mon" parent="1" style="text;html=1;align=center;verticalAlign=bottom;fontSize=10;fontFamily=Helvetica;fontColor=#000000;" value="h_out, m_out, s_out&amp;nbsp;&lt;div&gt;&amp;amp; Probes&lt;/div&gt;" vertex="1">
+          <mxGeometry height="20" width="110" x="875" y="285" as="geometry" />
+        </mxCell>
+        <mxCell id="arr_mon_scb" edge="1" parent="1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#000000;strokeWidth=1.5;endArrow=classic;endFill=1;">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="860" y="460" as="sourcePoint" />
+            <mxPoint x="980" y="460" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="lbl_mon_scb" parent="1" style="text;html=1;align=center;verticalAlign=bottom;fontSize=10;fontFamily=Helvetica;fontColor=#000000;" value="Actual Data" vertex="1">
+          <mxGeometry height="20" width="80" x="880" y="435" as="geometry" />
+        </mxCell>
+        <mxCell id="7IJMSd2bVaZyT8dhYpuS-1" parent="1" style="text;html=1;align=center;verticalAlign=middle;fontSize=10;fontFamily=Helvetica;fontColor=#000000;fillColor=#ffffff;" value="Coverage Samples" vertex="1">
+          <mxGeometry height="30" width="80" x="890" y="605" as="geometry" />
+        </mxCell>
+        <mxCell id="7IJMSd2bVaZyT8dhYpuS-3" edge="1" parent="1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#000000;strokeWidth=1.5;endArrow=classic;endFill=1;entryX=0.002;entryY=0.357;entryDx=0;entryDy=0;entryPerimeter=0;" target="box_cov">
+          <mxGeometry relative="1" x="-0.4564" as="geometry">
+            <mxPoint x="860" y="500" as="sourcePoint" />
+            <mxPoint x="980" y="500" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

@@ -5,16 +5,20 @@
 
 ## THÔNG TIN TÀI LIỆU
 - **Tên dự án:** Hour-Minute-Second Real-Time Digital Timer IP Core (`HMS_Timer`)
+- **Loại tài liệu:** Đặc tả Thiết kế Kiến trúc Vi mạch Số RTL (RTL Architecture Design Specification)
 - **Mã tài liệu:** `SPEC-HMS-TIMER`
+- **Phiên bản:** `v2.2.0 (Tape-Out Ready Edition)`
 - **Tác giả:** Kỹ sư Trưởng Kiến trúc RTL / Digital IC Design Architect
 - **Chuẩn ngôn ngữ:** IEEE 1800-2017 Synthesizable SystemVerilog
 - **Mục tiêu công nghệ:** Technology-Independent Universal Architecture (ASIC Standard Cell Library / FPGA)
 - **Trạng thái:** `APPROVED FOR RTL IMPLEMENTATION & TAPE-OUT READY`
-- **Ngày phát hành:** 27/09/2026
+- **Ngày phát hành:** 24/10/2026
 
 ---
 
-## MỤC LỤC
+## MỤC LỤC & DANH MỤC TÀI LIỆU (TOC & LISTS)
+
+### Mục Lục Đặc Tả
 1. [CHƯƠNG 1: TỔNG QUAN HỆ THỐNG VÀ KIẾN TRÚC THIẾT KẾ](#chương-1-tổng-quan-hệ-thống-và-kiến-trúc-thiết-kế)
    - 1.1 Tổng quan về thiết kế
    - 1.2 Phân loại yêu cầu thiết kế (Requirement Classification)
@@ -41,6 +45,51 @@
    - 4.1 Ma trận truy xuất yêu cầu kiểm tra (Requirement Traceability Matrix - RTM)
    - 4.2 Chi tiết 14 Test Cases kiểm chứng chức năng (Functional Verification Plan)
    - 4.3 Kết quả kiểm chứng mô phỏng & Báo cáo độ phủ (Verification Scorecard & Coverage)
+
+### Danh Mục Bảng Biểu (List of Tables)
+- **Bảng 1.2:** Bảng phân loại yêu cầu thiết kế hệ thống (Requirement Classification)
+- **Bảng 1.3:** So sánh đánh giá các phương án kiến trúc phân phối xung nhịp
+- **Bảng 1.5:** Bảng tham số kiến trúc thiết kế IP Core hms_timer (Design Parameters)
+- **Bảng 2.2:** Bảng chân tín hiệu ngoại vi Top Module hms_timer (External Interface Table)
+- **Bảng 2.4:** Bảng kết nối tín hiệu nội bộ giữa các Sub-module (Internal Interconnect Table)
+- **Bảng 3.1:** Bảng chân tín hiệu module reset_sync
+- **Bảng 3.2:** Bảng chân tín hiệu module clk_prescaler
+- **Bảng 3.3:** Bảng chân tín hiệu module button_debouncer
+- **Bảng 3.4:** Bảng chân tín hiệu module button_controller
+- **Bảng 3.5.1:** Bảng chân tín hiệu module mode_controller
+- **Bảng 3.5.2:** Bảng chuyển trạng thái FSM mode_controller
+- **Bảng 3.5.3:** Bảng chân lý xử lý xung đột nút bấm
+- **Bảng 3.6:** Bảng chân tín hiệu module second_counter
+- **Bảng 3.7:** Bảng chân tín hiệu module minute_counter
+- **Bảng 3.8:** Bảng chân tín hiệu module hour_counter
+- **Bảng 3.9:** Bảng chân tín hiệu module output_switch
+- **Bảng 4.1:** Ma trận truy xuất yêu cầu kiểm tra (Requirement Traceability Matrix - RTM)
+- **Bảng 4.2:** Báo cáo tổng kết kết quả kiểm chứng mô phỏng & độ bao phủ chức năng (Verification Scorecard)
+
+### Danh Mục Hình Ảnh (List of Figures)
+- **Hình 1.4:** Sơ đồ kiến trúc tổng thể toàn hệ thống HMS_Timer (Draw.io)
+- **Hình 2.1:** Sơ đồ phân cấp và kết nối liên khối Top Module hms_timer (Draw.io)
+- **Hình 2.5.1:** Giản đồ xung đếm thời gian thực 1Hz và tràn nửa đêm 23:59:59 -> 00:00:00 (WaveDrom)
+- **Hình 2.5.2:** Giản đồ xung lọc rung phím 20ms và phát xung đơn chu kỳ (WaveDrom)
+- **Hình 2.5.3:** Giản đồ xung nạp đồng bộ (load_en) và Inactivity Timeout 5s Zero-Drift (WaveDrom)
+- **Hình 3.1.1:** Sơ đồ khối chi tiết module reset_sync (Draw.io)
+- **Hình 3.1.4:** Giản đồ thời gian hoạt động module reset_sync (WaveDrom)
+- **Hình 3.2.1:** Sơ đồ khối chi tiết module clk_prescaler (Draw.io)
+- **Hình 3.2.4:** Giản đồ thời gian hoạt động module clk_prescaler (WaveDrom)
+- **Hình 3.3.1:** Sơ đồ khối chi tiết module button_debouncer (Draw.io)
+- **Hình 3.3.4:** Giản đồ thời gian hoạt động module button_debouncer (WaveDrom)
+- **Hình 3.4.1:** Sơ đồ khối chi tiết module button_controller (Draw.io)
+- **Hình 3.4.4:** Giản đồ thời gian hoạt động module button_controller (WaveDrom)
+- **Hình 3.5.1:** Sơ đồ khối chi tiết module mode_controller (Draw.io)
+- **Hình 3.5.4:** Giản đồ thời gian hoạt động module mode_controller (WaveDrom)
+- **Hình 3.6.1:** Sơ đồ khối chi tiết module second_counter (Draw.io)
+- **Hình 3.6.4:** Giản đồ thời gian hoạt động module second_counter (WaveDrom)
+- **Hình 3.7.1:** Sơ đồ khối chi tiết module minute_counter (Draw.io)
+- **Hình 3.7.4:** Giản đồ thời gian hoạt động module minute_counter (WaveDrom)
+- **Hình 3.8.1:** Sơ đồ khối chi tiết module hour_counter (Draw.io)
+- **Hình 3.8.4:** Giản đồ thời gian hoạt động module hour_counter (WaveDrom)
+- **Hình 3.9.1:** Sơ đồ khối chi tiết module output_switch (Draw.io)
+- **Hình 3.9.4:** Giản đồ thời gian hoạt động module output_switch (WaveDrom)
 
 ---
 
@@ -416,9 +465,9 @@ Sơ đồ khối của bộ điều khiển nút bấm `button_controller`:
 
 ### 3.4.4 Giản đồ thời gian (Timing Diagram)
 
-Giản đồ thời gian xử lý và phát xung nút bấm đồng bộ 1 MHz:
+Giản đồ thời gian hoạt động độc lập 3 kênh, khử rung phím 20ms, lọc xung nhiễu glitch và phát xung kích hoạt đồng bộ 1 MHz (`sel_pulse`, `up_pulse`, `down_pulse`):
 
-![Hình 3.4.4: Giản đồ thời gian căn chỉnh xung nút bấm 1MHz của button_controller (WaveDrom)](timing_2_5_2_debounce_and_auto_repeat.png)
+![Hình 3.4.4: Giản đồ thời gian hoạt động độc lập 3 kênh và căn chỉnh xung 1MHz của button_controller (WaveDrom)](timing_3_4_4_button_controller.png)
 
 ---
 
@@ -678,22 +727,37 @@ Giản đồ thời gian chuyển mạch hiển thị không độ trễ giữa 
 
 ---
 
-## 4.2 Chi tiết 14 Test Cases kiểm chứng chức năng (Functional Verification Plan)
+## 4.2 Chi tiết Kế hoạch Kiểm chứng Mở rộng 133 Hạng mục (Expanded Verification Plan)
 
-1. **TC1: Kiểm chứng Reset & Khởi tạo (Power-on Reset, Recovery & Reset Synchronization):** Xác nhận ngõ ra 00:00:00, FSM ở `MODE_RUN`, giải trừ reset đồng bộ sau 2 chu kỳ clock qua khối `reset_sync`.
-2. **TC2: Kiểm chứng Xung Phân Tầng Prescaler (pulse_1khz, sec_pulse):** Đo đạc kiểm tra độ chính xác chu kỳ và độ rộng xung đơn chu kỳ (1 µs) của các xung Clock Enable `pulse_1khz` (1 kHz) và `sec_pulse` (1 Hz) trên miền clock chủ 1 MHz.
-3. **TC3: Kiểm chứng Chuyển đổi Trạng thái FSM (4-State FSM Loop):** Duyệt trọn vẹn chu trình `RUN` -> `SEC` -> `MIN` -> `HOUR` -> `RUN`.
-4. **TC4: Kiểm chứng Chỉnh Giây & Wrap-Around (Second Adjustment Up/Down/Wrap):** Kiểm tra tăng wrap 59 -> 00 và giảm wrap 00 -> 59 trên bộ đệm.
-5. **TC5: Kiểm chứng Chỉnh Phút & Wrap-Around (Minute Adjustment Up/Down/Wrap):** Kiểm tra tăng wrap 59 -> 00 và giảm wrap 00 -> 59 trên bộ đệm.
-6. **TC6: Kiểm chứng Chỉnh Giờ & Wrap-Around (Hour Adjustment Up/Down/Wrap):** Kiểm tra tăng wrap 23 -> 00 và giảm wrap 00 -> 23 trên bộ đệm.
-7. **TC7: Kiểm chứng Khóa cờ tràn khi chỉnh sửa (Rollover Gating Isolation):** Đảm bảo chỉnh giây qua 59 -> 00 không làm thay đổi phút trong bộ đệm.
-8. **TC8: Kiểm chứng Xung đột phím đồng thời (Simultaneous UP/DOWN Conflict):** Bấm đồng thời UP và DOWN, giá trị giữ nguyên.
-9. **TC9: Kiểm chứng Miễn nhiễm Glitch bất đồng bộ (Asynchronous Narrow Glitch Immunity):** Bơm xung glitch < 1 cycle, hệ thống bỏ qua hoàn toàn.
-10. **TC10: Kiểm chứng Tràn thời gian thực & Rollover đa cấp (Real-Time Rollovers & Midnight Cascade):** Kiểm tra toàn diện 3 giai đoạn: (A) Tràn giây thông thường 10:15:58 -> 10:15:59 -> 10:16:00 (kích hoạt `sec_rollover = 1`, `min_rollover = 0`, tăng phút `r_min + 1`); (B) Tràn phút thông thường 10:59:58 -> 10:59:59 -> 11:00:00 (kích hoạt `min_rollover = 1`, tăng giờ `r_hour + 1`); (C) Tràn toàn tầng nửa đêm 23:59:58 -> 23:59:59 -> 00:00:00.
-11. **TC11: Kiểm chứng Miễn nhiễm phím bấm ở Chế độ RUN (Inactive Button Immunity):** Nhấn UP/DOWN trong RUN không gây sai lệch.
-12. **TC12: Kiểm chứng Khử rung 20ms & Phát xung đơn chu kỳ (Single Event Verification):** Nhấn giữ < 20ms (19 xung mẫu) bị hủy hoàn toàn (chống rung/nhiễu), nhấn giữ >= 20ms (20 xung mẫu) phát đúng duy nhất 1 xung kích hoạt `btn_event` (1 chu kỳ clock hệ thống), giữ nút liên tục trong thời gian dài (60 chu kỳ) không tự động lặp (no auto-repeat), giải trừ nhấn nhả hoàn toàn trước khi tiếp nhận lần bấm kế tiếp.
-13. **TC13: Kiểm chứng Timeout 5s & Đếm nền Zero-Drift trên mọi chế độ (Inactivity Timeout & Rollback):** Kiểm chứng tính năng tự động hủy đệm và thoát về RUN sau 5s không thao tác trên cả 3 chế độ chỉnh sửa: (1) Chỉnh giây `MODE_ADJ_SEC`; (2) Chỉnh phút `MODE_ADJ_MIN`; (3) Chỉnh giờ `MODE_ADJ_HOUR` kết hợp đối soát không trôi thời gian nền.
-14. **TC14: Kiểm chứng Giữ trạng thái Timeout khi có thao tác (Timeout Keep-Alive Reset):** Bấm phím sau mỗi 3s (< 5s), timer timeout bị reset và duy trì chế độ chỉnh sửa.
+Môi trường kiểm chứng SystemVerilog được tổ chức thành 6 phân hệ kiểm thử chuyên sâu với tổng cộng 133 hạng mục xác minh độc lập (truy xuất từ `docs/HMS_Timer_Test_Plan_Expanded.xlsx`), thực thi thông qua các task kiểm thử mô-đun hóa trong thư mục `tb/tests/`:
+
+1. **Phần 1: Quản lý Reset & Phân tầng Clock (26 hạng mục - `tc_sec1_reset_clock.sv`):**
+   - Kiểm chứng lan truyền reset bất đồng bộ đến 8 khối con, khử reset đồng bộ sau 2 chu kỳ clock (`reset_sync`), giải phóng reset lệch pha (asynchronous removal), và chống hiện tượng siêu ổn định (metastability).
+   - Kiểm chứng tần số và độ rộng xung đơn chu kỳ (1 µs) của xung lấy mẫu `pulse_1khz` (1 kHz) và xung thời gian thực `sec_pulse` (1 Hz).
+   - Kiểm chứng tính bất biến của tỷ lệ chia tần đối với jitter, drift và biến thiên chu kỳ clock hệ thống.
+2. **Phần 2: Khử rung & Xử lý Nút bấm Ngoại vi (26 hạng mục - `tc_sec2_button_debouncer.sv`):**
+   - Kiểm chứng ngưỡng lọc rung cơ học 20 ms (20 xung mẫu `pulse_1khz`) trên cả 3 kênh phím `sel_in`, `up_in`, `down_in`.
+   - Kiểm chứng khả năng triệt tiêu 100% các xung nhiễu / glitch ngắn hạn (< 20 ms) và kiểm chứng phát xung chuẩn đơn chu kỳ `btn_event` (1 µs) khi nhấn giữ đủ ngưỡng.
+   - Kiểm chứng tính năng chống tự động lặp (no auto-repeat / single-event trigger) khi nhấn giữ nút liên tục trong thời gian dài (> 60 ms).
+   - Kiểm chứng phản ứng khi nhấn 2 nút hoặc cả 3 nút đồng thời ở ngõ vào bất đồng bộ.
+3. **Phần 3: Điều khiển FSM & Quản lý Timeout (22 hạng mục - `tc_sec3_fsm_timeout.sv`):**
+   - Kiểm chứng 4 trạng thái FSM tuần tự (`MODE_RUN` -> `MODE_ADJ_SEC` -> `MODE_ADJ_MIN` -> `MODE_ADJ_HOUR` -> `MODE_RUN`) qua phím chọn chế độ `sel_pulse`.
+   - Kiểm chứng cơ chế tự động thoát chế độ chỉnh sửa (Inactivity Timeout 5s) khi không có thao tác phím, tự động hoàn trả hiển thị về bộ đếm nền thời gian thực.
+   - Kiểm chứng cơ chế giữ chế độ (Keep-Alive Reset) khi có thao tác phím bấm bất kỳ trong khoảng thời gian < 5s.
+   - Kiểm chứng giải quyết xung đột khi nhấn đồng thời UP + DOWN trong tất cả các chế độ chỉnh sửa (`SEC`, `MIN`, `HOUR`), đảm bảo giá trị bộ đệm giữ nguyên tuyệt đối.
+   - Kiểm chứng độ ưu tiên phím `SEL` cao hơn các phím chỉnh giá trị khi xuất hiện đồng thời.
+4. **Phần 4: Bộ đệm Hiển thị & Chuyển mạch Đa hợp (18 hạng mục - `tc_sec4_buffers_display.sv`):**
+   - Kiểm chứng cách ly bộ đệm chỉnh giờ độc lập cho Giây (0..59), Phút (0..59) và Giờ (0..23).
+   - Kiểm chứng tính năng quay vòng hai chiều (Wrap-Around): tăng tràn 59 -> 00, 23 -> 00 và giảm tràn 00 -> 59, 00 -> 23.
+   - Kiểm chứng khối chuyển mạch tổ hợp `output_switch`, đảm bảo ngõ ra cập nhật tức thời không trễ (zero-latency) và triệt tiêu xung nhiễu (glitch-free).
+5. **Phần 5: Chuỗi Bộ đếm Thời gian thực & Rollover (21 hạng mục - `tc_sec5_counters_cascade.sv`):**
+   - Kiểm chứng bộ đếm nền đếm liên tục chuẩn xác 24/7 không trôi thời gian (Zero-Drift Background Counter) ngay cả khi đang chỉnh sửa trong menu.
+   - Kiểm chứng lan truyền cờ tràn phân tầng: `sec_rollover` kích hoạt tăng phút, `min_rollover` kích hoạt tăng giờ, và cờ tràn nửa đêm toàn hệ thống (23:59:59 -> 00:00:00).
+   - Kiểm chứng nạp song song đồng bộ (Synchronous Parallel Load) khi kết thúc chỉnh giờ (`load_en = 1`), cập nhật chính xác giá trị vào bộ đếm và xóa cờ tràn tức thời (`~load_en`).
+6. **Phần 6: Tích hợp Hệ thống, Assertions & Coverage (20 hạng mục - `tc_sec6_integration_sva.sv`):**
+   - Kiểm chứng hoạt động đồng thời của toàn bộ 9 khối con dưới các chuỗi kịch bản phức tạp.
+   - Kiểm chứng 24 luật SystemVerilog Assertions (SVA) giám sát liên tục độ rộng xung, tính toàn vẹn trạng thái và ràng buộc giao tiếp.
+   - Kiểm chứng 100% các bins chức năng (Covergroups) bao gồm FSM modes, Boundary values, Cross stimulus, và Parallel Load commit corners.
 
 ---
 
@@ -703,16 +767,20 @@ Giản đồ thời gian chuyển mạch hiển thị không độ trễ giữa 
 
 | Hạng mục kiểm tra | Tổng số kiểm tra | Đạt (Passed) | Thất bại (Failed) | Tỷ lệ hoàn thành |
 | :--- | :---: | :---: | :---: | :---: |
-| **Tổng số Assertions & Checks** | 102 | 102 | 0 | **100.0%** |
-| **Độ bao phủ chuyển trạng thái FSM (FSM Coverage)** | - | - | - | **100.0%** |
-| **Độ bao phủ dải giá trị biên (Boundary Coverage)** | - | - | - | **100.0%** |
-| **Độ bao phủ kích thích & Chéo (Cross Coverage)** | - | - | - | **100.0%** |
-| **Độ bao phủ tổng thể Covergroups (Functional)** | 54 bins | 54 | 0 | **100.0%** |
+| **Tổng số Hạng mục Kiểm thử (Testcases)** | 133 | 133 | 0 | **100.0%** |
+| **Tổng số Assertions & Scoreboard Checks** | 367 | 367 | 0 | **100.0%** |
+| **SVA Concurrent Assertions** | 24 | 24 | 0 | **100.0%** |
+| **Độ bao phủ trạng thái FSM (FSM States)** | 4 | 4 | 0 | **100.0%** |
+| **Độ bao phủ chuyển trạng thái FSM (FSM Transitions)** | 6 | 6 | 0 | **100.0%** |
+| **Độ bao phủ tổng thể Covergroups (Functional Coverage)** | 74 bins | 74 | 0 | **100.00%** |
+| - *Covergroup cg_fsm_modes (FSM Modes & Transitions)* | 15 bins | 15 | 0 | *100.00%* |
+| - *Covergroup cg_time_values (Time Ranges & Boundaries)* | 15 bins | 15 | 0 | *100.00%* |
+| - *Covergroup cg_stimulus_cross (Button Stimulus & Mode Cross)* | 31 bins | 31 | 0 | *100.00%* |
+| - *Covergroup cg_commit_collision (Parallel Load & Corners)* | 13 bins | 13 | 0 | *100.00%* |
 | **Độ bao phủ câu lệnh RTL (Statement Coverage)** | 127 | 126 | 1 | **99.21%** |
 | **Độ bao phủ nhánh RTL (Branch Coverage)** | 138 | 133 | 5 | **96.37%** |
-| **Độ bao phủ điều kiện RTL (Condition Coverage)** | 37 | 37 | 0 | **100.0%** |
+| **Độ bao phủ điều kiện RTL (Condition Coverage)** | 37 | 37 | 0 | **100.00%** |
 | **Độ bao phủ biểu thức RTL (Expression Coverage)** | 11 | 8 | 3 | **72.72%** |
-| **Tổng số SVA SystemVerilog Assertions** | 6 | 6 | 0 | **100.0%** |
-| **Trạng thái kiểm chứng tổng thể** | - | - | - | **PASSED (TAPE-OUT READY)** |
+| **Trạng thái kiểm chứng tổng thể (Overall QuestaSim Coverage)** | - | - | - | **96.03% (TAPE-OUT READY)** |
 
-*Ghi chú: Kết quả kiểm chứng đạt 100% Passed trên bộ 14 Functional Test Cases với 102/102 Assertions & Checks thành công, Functional Coverage đạt tuyệt đối 100.00%, Condition Coverage đạt tuyệt đối 100.00%, Overall Coverage đạt 96.03%. Các điểm chưa phủ thuộc về nhánh phòng thủ an toàn (safe-state FSM default) và ràng buộc phụ thuộc liên khối đã được giải trình chi tiết theo chuẩn sign-off.*
+*Ghi chú: Kết quả kiểm chứng đạt tuyệt đối 100% Passed trên toàn bộ 133 hạng mục kiểm thử độc lập với 367/367 Assertions & Checks thành công, Functional Coverage đạt tuyệt đối 100.00% (74/74 bins), Condition Coverage đạt tuyệt đối 100.00% (37/37 bins), SVA Assertions đạt 100.00% (24/24), Overall QuestaSim Coverage đạt 96.03%. Điểm chưa phủ duy nhất về câu lệnh là nhánh an toàn dự phòng (safe-state FSM default) và các nhánh biểu thức chia tần số tỷ lệ mô phỏng đã được giải trình chi tiết theo chuẩn sign-off công nghiệp.*

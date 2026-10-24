@@ -1,0 +1,109 @@
+<mxfile host="Electron">
+  <diagram name="Page-1" id="diag_4_8_verification_flow">
+    <mxGraphModel dx="1250" dy="551" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1200" pageHeight="950" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="flow_title" parent="1" style="text;html=1;align=center;verticalAlign=middle;fontSize=15;fontStyle=1;fontFamily=Helvetica;fontColor=#000000;" value="LUỒNG THỰC THI KIỂM CHỨNG TOÀN DIỆN (END-TO-END VERIFICATION FLOW)" vertex="1">
+          <mxGeometry height="30" width="1000" x="100" y="20" as="geometry" />
+        </mxCell>
+        <mxCell id="box_step1" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f8f9fa;strokeColor=#000000;strokeWidth=1.5;align=left;verticalAlign=top;spacingLeft=10;spacingTop=8;fontSize=11;fontFamily=Helvetica;fontColor=#000000;" value="&lt;b&gt;BƯỚC 1: KHỞI TẠO MÔI TRƯỜNG &amp; PARSE ĐỐI SỐ (tb_hms_timer)&lt;/b&gt;&#xa;• Phát xung master clock 1 MHz (chu kỳ 1000 ns). Cấu hình tham số rút gọn mô phỏng.&#xa;• Đọc tham số dòng lệnh +TESTNAME (chạy 1 bài test lẻ, 1 phân hệ, hoặc toàn bộ 133 bài).&#xa;• Khởi tạo các đối tượng OOP: driver = new(vif), scoreboard = new(vif), coverage = new(vif)." vertex="1">
+          <mxGeometry height="80" width="900" x="150" y="70" as="geometry" />
+        </mxCell>
+        <mxCell id="box_step2" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f8f9fa;strokeColor=#000000;strokeWidth=1.5;align=left;verticalAlign=top;spacingLeft=10;spacingTop=8;fontSize=11;fontFamily=Helvetica;fontColor=#000000;" value="&lt;b&gt;BƯỚC 2: THIẾT LẬP RESET ĐỒNG BỘ HÓA (hms_driver)&lt;/b&gt;&#xa;• Gọi driver.reset_dut(10): Kích hoạt rstn = 0 bất đồng bộ trong 10 chu kỳ xung nhịp.&#xa;• DUT Reset Synchronizer (reset_sync) giải trừ rstn_sync mức cao đồng bộ sau đúng 2 sườn clock.&#xa;• Golden Model Scoreboard được reset về trạng thái gốc 00:00:00 (MODE_RUN)." vertex="1">
+          <mxGeometry height="80" width="900" x="150" y="190" as="geometry" />
+        </mxCell>
+        <mxCell id="box_step3" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f8f9fa;strokeColor=#000000;strokeWidth=1.5;align=left;verticalAlign=top;spacingLeft=10;spacingTop=8;fontSize=11;fontFamily=Helvetica;fontColor=#000000;" value="&lt;b&gt;BƯỚC 3: PHÁT CHUỖI KÍCH THÍCH THEO KỊCH BẢN (Testcase &amp; hms_driver)&lt;/b&gt;&#xa;• Kịch bản testcase gọi các tác vụ Driver: pulse_sel(), pulse_up(), pulse_down(), set_time_via_edit().&#xa;• Driver điều khiển các tín hiệu sel_in, up_in, down_in đồng bộ thông qua clocking block cb_drv (#1ns skew).&#xa;• Tự động điều hòa độ rộng xung giữ (pulse_width = 20) và thời gian giãn cách (post_delay = 25)." vertex="1">
+          <mxGeometry height="80" width="900" x="150" y="330" as="geometry" />
+        </mxCell>
+        <mxCell id="arr_3_4" edge="1" parent="1" source="box_step3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;strokeColor=#000000;strokeWidth=1.5;endArrow=classic;endFill=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="box_step4">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="600" y="395" as="sourcePoint" />
+            <mxPoint x="600" y="430" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="PW-VhQT4l26dgktgOX3g-3" edge="1" parent="1" source="box_step4" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;defaultLabelBackgroundColor=page;strokeWidth=2;" target="box_step5b" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="box_step4" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;strokeWidth=2;align=left;verticalAlign=top;spacingLeft=10;spacingTop=8;fontSize=11;fontFamily=Helvetica;fontColor=#000000;" value="&lt;b&gt;BƯỚC 4: DUT XỬ LÝ PHẦN CỨNG ĐỒNG BỘ TẠI TỪNG CHU KỲ XUNG NHỊP (hms_timer DUT)&lt;/b&gt;&#xa;• Khử rung 20ms và tạo xung đơn chu kỳ cho các phím bấm (button_controller).&#xa;• Chuyển đổi trạng thái FSM (RUN &lt;-&gt; SEC &lt;-&gt; MIN &lt;-&gt; HOUR) và quản lý bộ đệm / timeout (mode_controller).&#xa;• Đếm nền thời gian thực liên tục (second/minute/hour_counter) và cập nhật hiển thị (output_switch)." vertex="1">
+          <mxGeometry height="80" width="900" x="150" y="455" as="geometry" />
+        </mxCell>
+        <mxCell id="arr_bar" edge="1" parent="1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;strokeColor=#000000;strokeWidth=1.5;endArrow=none;">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="280" y="560" as="sourcePoint" />
+            <mxPoint x="920" y="560" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="arr_down_5a" edge="1" parent="1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;strokeColor=#000000;strokeWidth=1.5;endArrow=classic;endFill=1;">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="280" y="560" as="sourcePoint" />
+            <mxPoint x="280" y="590" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="arr_down_5b" edge="1" parent="1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;strokeColor=#000000;strokeWidth=1.5;endArrow=classic;endFill=1;">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="600" y="560" as="sourcePoint" />
+            <mxPoint x="600" y="590" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="arr_down_5c" edge="1" parent="1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;strokeColor=#000000;strokeWidth=1.5;endArrow=classic;endFill=1;">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="920" y="560" as="sourcePoint" />
+            <mxPoint x="920" y="590" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="box_step5a" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f8f9fa;strokeColor=#000000;strokeWidth=1.5;align=left;verticalAlign=top;spacingLeft=8;spacingTop=6;fontSize=10;fontFamily=Helvetica;fontColor=#000000;" value="&lt;b&gt;5A. ĐỐI SOÁT SCOREBOARD&lt;/b&gt;&#xa;• Testcase gọi check_time(), check_mode(), check_signal().&#xa;• Đọc ngõ ra thực tế từ cb_mon.&#xa;• So sánh với Golden Model.&#xa;• Mismatch -&gt; $error, tăng failed_checks." vertex="1">
+          <mxGeometry height="110" width="270" x="150" y="590" as="geometry" />
+        </mxCell>
+        <mxCell id="box_step5b" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f8f9fa;strokeColor=#000000;strokeWidth=1.5;align=left;verticalAlign=top;spacingLeft=8;spacingTop=6;fontSize=10;fontFamily=Helvetica;fontColor=#000000;" value="&lt;b&gt;5B. GIÁM SÁT 24 LUẬT SVA&lt;/b&gt;&#xa;• Giám sát thụ động liên tục tại mọi @(posedge clk).&#xa;• Kiểm tra dải giá trị, độ rộng xung 1 chu kỳ, FSM legal transitions.&#xa;• Vi phạm bất kỳ -&gt; Báo lỗi tức thì (Fail-Fast) kèm vị trí và chu kỳ." vertex="1">
+          <mxGeometry height="110" width="270" x="465" y="590" as="geometry" />
+        </mxCell>
+        <mxCell id="box_step5c" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f8f9fa;strokeColor=#000000;strokeWidth=1.5;align=left;verticalAlign=top;spacingLeft=8;spacingTop=6;fontSize=10;fontFamily=Helvetica;fontColor=#000000;" value="&lt;b&gt;5C. THU THẬP ĐỘ BAO PHỦ&lt;/b&gt;&#xa;• Tự động lấy mẫu tại @(posedge clk) trên 4 Covergroups (74 bins).&#xa;• Ghi nhận các trạng thái FSM, điểm lật giá trị biên, tổ hợp phím bấm.&#xa;• Đo lường mức độ hoàn thành ma trận verification theo thời gian thực." vertex="1">
+          <mxGeometry height="110" width="270" x="780" y="590" as="geometry" />
+        </mxCell>
+        <mxCell id="arr_bar2" edge="1" parent="1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;strokeColor=#000000;strokeWidth=1.5;endArrow=none;entryX=0.524;entryY=1.004;entryDx=0;entryDy=0;entryPerimeter=0;" target="box_step5c">
+          <mxGeometry relative="1" x="-0.0681" as="geometry">
+            <mxPoint x="280" y="750" as="sourcePoint" />
+            <mxPoint x="921.7499999999998" y="710" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="arr_merge_6" edge="1" parent="1" source="box_step5b" style="edgeStyle=orthogonalEdgeStyle;rounded=0;strokeColor=#000000;strokeWidth=1.5;endArrow=classic;endFill=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="box_step6">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="600" y="740" as="sourcePoint" />
+            <mxPoint x="600" y="770" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="box_step6" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f8f9fa;strokeColor=#000000;strokeWidth=1.5;align=left;verticalAlign=top;spacingLeft=10;spacingTop=8;fontSize=11;fontFamily=Helvetica;fontColor=#000000;" value="&lt;b&gt;BƯỚC 6: ĐÁNH GIÁ KẾT QUẢ TỪNG BÀI TEST (finish_test_footer)&lt;/b&gt;&#xa;• So sánh biến đếm failed_checks của Scoreboard sau bài test với số lỗi ban đầu.&#xa;• Nếu không phát sinh lỗi mới: Tăng g_test_passed và xuất log [PASS] kèm tên testcase.&#xa;• Nếu phát sinh lỗi: Tăng g_test_failed và xuất log [FAIL] chi tiết." vertex="1">
+          <mxGeometry height="80" width="900" x="150" y="785" as="geometry" />
+        </mxCell>
+        <mxCell id="arr_6_7" edge="1" parent="1" source="box_step6" style="edgeStyle=orthogonalEdgeStyle;rounded=0;strokeColor=#000000;strokeWidth=1.5;endArrow=classic;endFill=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="box_step7">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="600" y="845" as="sourcePoint" />
+            <mxPoint x="600" y="880" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="box_step7" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;strokeWidth=2;align=left;verticalAlign=top;spacingLeft=10;spacingTop=8;fontSize=11;fontFamily=Helvetica;fontColor=#000000;" value="&lt;b&gt;BƯỚC 7: TỔNG HỢP HỒI QUY TOÀN DIỆN &amp; KÝ DUYỆT (Sign-Off &amp; Anti-False-Pass)&lt;/b&gt;&#xa;• coverage.report_coverage(): In bảng tổng kết độ bao phủ chức năng (FSM, Ranges, Stimulus Cross, Commit Collision).&#xa;• scoreboard.report_summary(): In Scorecard tổng kết toàn bộ số phép kiểm tra (Total Checks, Passed Checks, Failed Checks).&#xa;• CƠ CHẾ CHỐNG LỌT LỖI (Anti-False-Pass Enforcement): Nếu failed_checks &gt; 0, gọi ngay $fatal(1, &quot;...&quot;) để chấm dứt thất bại.&#xa;• Nếu toàn bộ checks vượt qua (133/133 test passed, 367/367 checks passed, 100% coverage): Gọi $finish kết thúc mô phỏng an toàn." vertex="1">
+          <mxGeometry height="85" width="900" x="150" y="910" as="geometry" />
+        </mxCell>
+        <mxCell id="PW-VhQT4l26dgktgOX3g-1" edge="1" parent="1" source="box_step1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;strokeColor=#000000;strokeWidth=1.5;endArrow=classic;endFill=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" target="box_step2">
+          <mxGeometry relative="1" x="0.8489" as="geometry">
+            <mxPoint x="630" y="310" as="sourcePoint" />
+            <mxPoint x="630" y="345" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="PW-VhQT4l26dgktgOX3g-2" edge="1" parent="1" source="box_step2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;strokeColor=#000000;strokeWidth=1.5;endArrow=classic;endFill=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="box_step3">
+          <mxGeometry relative="1" x="-0.4714" as="geometry">
+            <mxPoint x="640" y="230" as="sourcePoint" />
+            <mxPoint x="640" y="270" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="PW-VhQT4l26dgktgOX3g-4" edge="1" parent="1" style="endArrow=none;html=1;rounded=0;defaultLabelBackgroundColor=page;strokeWidth=2;" value="">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <mxPoint x="280" y="750" as="sourcePoint" />
+            <mxPoint x="280" y="700" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

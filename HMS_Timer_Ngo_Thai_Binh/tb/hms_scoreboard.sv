@@ -2,8 +2,10 @@
 // File: hms_scoreboard.sv
 // Class: hms_scoreboard
 // Description: Scoreboard and Golden Reference Model for HMS_Timer verification.
-//              Compares DUT outputs against Golden reference states and generates
-//              formal verification scorecards.
+//              Compares DUT outputs and internal probe states against Golden
+//              reference states and generates formal verification scorecards.
+//              Strictly follows anti-false-pass rules: $error on mismatch,
+//              $fatal if any failure exists upon completion.
 // Project: HMS_Timer
 // Language: SystemVerilog
 //==============================================================================
@@ -132,9 +134,9 @@ class hms_scoreboard;
                                expected_h, expected_m, expected_s));
         end else begin
             failed_checks++;
-            log_fail($sformatf("[%s] MISMATCH! DUT Time=%02d:%02d:%02d | Expected=%02d:%02d:%02d",
-                               tag, vif.h_out, vif.m_out, vif.s_out,
-                               expected_h, expected_m, expected_s));
+            $error("[%s] MISMATCH! DUT Time=%02d:%02d:%02d | Expected=%02d:%02d:%02d",
+                   tag, vif.h_out, vif.m_out, vif.s_out,
+                   expected_h, expected_m, expected_s);
         end
     endtask
 
@@ -146,8 +148,64 @@ class hms_scoreboard;
             log_pass($sformatf("[%s] Mode MATCH: %s", tag, mode2str(vif.adj_mode)));
         end else begin
             failed_checks++;
-            log_fail($sformatf("[%s] Mode MISMATCH! DUT Mode=%s | Expected=%s",
-                               tag, mode2str(vif.adj_mode), mode2str(expected_mode)));
+            $error("[%s] Mode MISMATCH! DUT Mode=%s | Expected=%s",
+                   tag, mode2str(vif.adj_mode), mode2str(expected_mode));
+        end
+    endtask
+
+    // Check Boolean/1-bit signal
+    task check_signal(logic actual, logic expected, string name, string tag = "");
+        total_checks++;
+        if (actual === expected) begin
+            passed_checks++;
+            log_pass($sformatf("[%s] Signal %s MATCH: %0b", tag, name, actual));
+        end else begin
+            failed_checks++;
+            $error("[%s] Signal %s MISMATCH! Actual=%0b | Expected=%0b",
+                   tag, name, actual, expected);
+        end
+    endtask
+
+    // Check integer/vector signal
+    task check_int(int actual, int expected, string name, string tag = "");
+        total_checks++;
+        if (actual == expected) begin
+            passed_checks++;
+            log_pass($sformatf("[%s] %s MATCH: %0d", tag, name, actual));
+        end else begin
+            failed_checks++;
+            $error("[%s] %s MISMATCH! Actual=%0d | Expected=%0d",
+                   tag, name, actual, expected);
+        end
+    endtask
+
+    // Check edit buffer registers
+    task check_buffer(int exp_h, int exp_m, int exp_s, string tag = "");
+        total_checks++;
+        if (vif.adj_hour === exp_h[4:0] &&
+            vif.adj_min  === exp_m[5:0] &&
+            vif.adj_sec  === exp_s[5:0]) begin
+            passed_checks++;
+            log_pass($sformatf("[%s] Buffer MATCH: %02d:%02d:%02d",
+                               tag, vif.adj_hour, vif.adj_min, vif.adj_sec));
+        end else begin
+            failed_checks++;
+            $error("[%s] Buffer MISMATCH! DUT=%02d:%02d:%02d | Expected=%02d:%02d:%02d",
+                   tag, vif.adj_hour, vif.adj_min, vif.adj_sec, exp_h, exp_m, exp_s);
+        end
+    endtask
+
+    // Check rollover flags
+    task check_rollover(logic exp_sec_roll, logic exp_min_roll, string tag = "");
+        total_checks++;
+        if (vif.sec_rollover === exp_sec_roll && vif.min_rollover === exp_min_roll) begin
+            passed_checks++;
+            log_pass($sformatf("[%s] Rollover MATCH: sec_roll=%0b, min_roll=%0b",
+                               tag, vif.sec_rollover, vif.min_rollover));
+        end else begin
+            failed_checks++;
+            $error("[%s] Rollover MISMATCH! Actual: sec_roll=%0b, min_roll=%0b | Expected: sec_roll=%0b, min_roll=%0b",
+                   tag, vif.sec_rollover, vif.min_rollover, exp_sec_roll, exp_min_roll);
         end
     endtask
 
@@ -164,6 +222,7 @@ class hms_scoreboard;
             $display("%s >>> VERIFICATION STATUS: 100%% PASSED <<< %s", PL_COLOR_GREEN, PL_COLOR_RESET);
         end else begin
             $display("%s >>> VERIFICATION STATUS: FAILED (%0d FAILURES DETECTED) <<< %s", PL_COLOR_RED, failed_checks, PL_COLOR_RESET);
+            $fatal(1, "TEST SUITE COMPLETED WITH %0d FAILURES! (Anti-False-Pass Enforcement)", failed_checks);
         end
         $display("================================================================================\n");
     endfunction

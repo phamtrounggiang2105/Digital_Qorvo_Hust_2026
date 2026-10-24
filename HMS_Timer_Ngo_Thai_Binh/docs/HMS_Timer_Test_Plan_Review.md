@@ -41,7 +41,7 @@ Báo cáo này trình bày kết quả rà soát, đánh giá chuyên sâu và m
 | **Độ phủ Requirement RTM** | Định tính trong Spec | **100% (19/19 Reqs có 2-way mapping)** | Truy xuất 2 chiều hoàn chỉnh |
 | **Số lượng SVA Assertions cataloged** | 6 properties | **18 properties chuẩn hóa** | Phủ toàn bộ interface và giao thức |
 | **Số lượng Covergroups / Bins** | 3 covergroups (khuyết timeout) | **4 covergroups + Cross bins toàn diện** | Bổ sung timeout & reset recovery bins |
-| **Trạng thái thực thi trung thực** | 55/55 ghi Pass (chưa chuẩn) | **133/133 Pass (100% Verified trên QuestaSim)** | Đã kiểm chứng toàn diện 146/146 checks |
+| **Trạng thái thực thi trung thực** | 55/55 ghi Pass (chưa chuẩn) | **133/133 Pass (100% Verified trên QuestaSim)** | Đã kiểm chứng toàn diện 367/367 checks |
 
 ```mermaid
 pie title Trạng thái Thực thi Test Plan Mở Rộng (Tổng 133 Items)
@@ -51,7 +51,7 @@ pie title Trạng thái Thực thi Test Plan Mở Rộng (Tổng 133 Items)
 ```
 
 ### 1.2. Các phát hiện cốt lõi và giá trị mang lại
-* **Loại bỏ hiện tượng "Bảo đảm an toàn giả tạo" (False Confidence):** Kế hoạch cũ đánh dấu 100% Pass cho cả các kịch bản kiểm tra phức tạp (như Reset khi đang đếm dở ở mẫu thứ 10 của Debounce, Reset trong chu kỳ Commit) dù testbench thực tế chưa kích thích các trường hợp này. Kế hoạch mở rộng đã bổ sung đầy đủ test tasks TC15–TC21 để trực tiếp kích thích và kiểm chứng thực tế toàn bộ 78 test cases mở rộng, đạt 146/146 checks Passed (100.00%).
+* **Loại bỏ hiện tượng "Bảo đảm an toàn giả tạo" (False Confidence):** Kế hoạch cũ đánh dấu 100% Pass cho cả các kịch bản kiểm tra phức tạp (như Reset khi đang đếm dở ở mẫu thứ 10 của Debounce, Reset trong chu kỳ Commit) dù testbench thực tế chưa kích thích các trường hợp này. Kế hoạch mở rộng đã bổ sung đầy đủ test tasks TC15–TC21 để trực tiếp kích thích và kiểm chứng thực tế toàn bộ 78 test cases mở rộng, đạt 367/367 checks Passed (100.00%).
 * **Đính chính quan niệm sai lầm về Metastability trong RTL Simulation:** Test 1.2.2 cũ khẳng định "Mô phỏng khử metastability bằng RTL simulation" — điều này là bất khả thi trong logic số 4 trạng thái (0, 1, X, Z). Đã cải tiến thành *Xác minh độ trễ 2 chu kỳ đồng bộ hóa và khoảng an toàn Removal Margin*.
 * **Xác nhận 5 quyết định kiến trúc then chốt:** Cơ chế reset bộ đếm debounce giữ nguyên gated 1kHz; SEL được ưu tiên tuyệt đối so với UP/DOWN; Keep-alive thắng khi bấm phím đúng chu kỳ thứ 5 của Timeout; Nạp song song (`load_en`) chiếm ưu tiên tuyệt đối so với xung đếm và triệt tiêu cờ tràn `rollover`.
 * **Đóng độ phủ chức năng (Coverage Closure 100%):** Hoàn thành 100% FSM Modes & Transitions, 100% Time Ranges & Boundaries, 100% Stimulus & Cross Coverage, và 100% Commit & Collision Coverage.

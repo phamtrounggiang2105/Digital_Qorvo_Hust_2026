@@ -1,0 +1,51 @@
+{
+  "signal": [
+    {
+      "name": "clk (1MHz)",
+      "wave": "p..................."
+    },
+    {
+      "name": "rstn",
+      "wave": "0.1................."
+    },
+    {
+      "name": "pulse_1khz (1kHz)",
+      "wave": "0..10.10.10.10.10.10"
+    },
+    {},
+    {
+      "name": "sel_in (valid >=20ms)",
+      "wave": "0...1..............."
+    },
+    {
+      "name": "sel_pulse (1-cycle)",
+      "wave": "0...............10.."
+    },
+    {},
+    {
+      "name": "up_in (valid >=20ms)",
+      "wave": "0.....1............."
+    },
+    {
+      "name": "up_pulse (1-cycle)",
+      "wave": "0.................10"
+    },
+    {},
+    {
+      "name": "down_in (glitch <20ms)",
+      "wave": "0..10.1.0..........."
+    },
+    {
+      "name": "down_pulse (filtered)",
+      "wave": "0..................."
+    }
+  ],
+  "head": {
+    "text": "button_controller: 3-Channel Independent Debouncing, Glitch Immunity and 1-Cycle Pulse Alignment",
+    "tick": 0
+  },
+  "foot": {
+    "text": "1MHz Master Clock domain (1us cycle), 1kHz Clock Enable (1ms period), 20-pulse filter threshold",
+    "tock": 0
+  }
+}

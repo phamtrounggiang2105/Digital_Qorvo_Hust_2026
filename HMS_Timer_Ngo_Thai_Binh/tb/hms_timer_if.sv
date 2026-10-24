@@ -2,7 +2,8 @@
 // File: hms_timer_if.sv
 // Interface: hms_timer_if
 // Description: SystemVerilog Verification Interface for HMS_Timer IP Core,
-//              equipped with Clocking Blocks, Modports and SVA Concurrent Assertions.
+//              equipped with Clocking Blocks, Modports, Internal Probes and
+//              SystemVerilog Assertions (SVA) formal checks.
 // Project: HMS_Timer
 // Language: SystemVerilog
 //==============================================================================
@@ -40,6 +41,19 @@ interface hms_timer_if (
     logic [5:0]              s_cnt;
     logic [5:0]              m_cnt;
     logic [4:0]              h_cnt;
+
+    // White-box internal probe signals
+    logic                    meta_rstn;
+    logic                    sync_rstn;
+    logic [19:0]             r_cnt_1khz;
+    logic [19:0]             r_cnt_1hz;
+    logic [4:0]              sel_timer_cnt;
+    logic [4:0]              up_timer_cnt;
+    logic [4:0]              down_timer_cnt;
+    logic                    sel_debounced;
+    logic                    up_debounced;
+    logic                    down_debounced;
+    logic [3:0]              timeout_cnt;
 
     //--------------------------------------------------------------------------
     // Driver Clocking Block (Synchronous stimulus driving)
@@ -164,17 +178,7 @@ interface hms_timer_if (
     assert_fsm_valid_state: assert property (p_fsm_valid_state)
         else $error("[SVA FAIL] Unknown state encoding on adj_mode: %b", adj_mode);
 
-    // A8: Prescaler Pulse 1kHz Single-Cycle Width Check
-    // Note: In fast simulation (PL_SIM_CLK_FREQ_HZ = 100), pulse_1khz is tied to 1'b1 by parameter.
-    // Width assertion is applicable when P_CLK_FREQ_HZ > P_PULSE_1KHZ_FREQ_HZ.
-    // property p_pulse_1khz_width;
-    //     @(posedge clk) disable iff (!rstn_sync)
-    //     pulse_1khz |=> !pulse_1khz;
-    // endproperty
-    // assert_pulse_1khz_width: assert property (p_pulse_1khz_width)
-    //     else $error("[SVA FAIL] pulse_1khz held active for more than 1 cycle!");
-
-    // A9: Prescaler Pulse 1Hz Single-Cycle Width Check
+    // A8: Prescaler Pulse 1Hz Single-Cycle Width Check
     property p_sec_pulse_width;
         @(posedge clk) disable iff (!rstn_sync)
         sec_pulse |=> !sec_pulse;
@@ -182,7 +186,7 @@ interface hms_timer_if (
     assert_sec_pulse_width: assert property (p_sec_pulse_width)
         else $error("[SVA FAIL] sec_pulse held active for more than 1 cycle!");
 
-    // A10: Load Enable Single-Cycle Pulse Width Check
+    // A9: Load Enable Single-Cycle Pulse Width Check
     property p_load_en_pulse_width;
         @(posedge clk) disable iff (!rstn_sync)
         load_en |=> !load_en;
@@ -190,7 +194,7 @@ interface hms_timer_if (
     assert_load_en_pulse_width: assert property (p_load_en_pulse_width)
         else $error("[SVA FAIL] load_en held active for more than 1 cycle!");
 
-    // A11: Load Priority Over Rollover Suppression
+    // A10: Load Priority Over Rollover Suppression
     property p_load_over_rollover;
         @(posedge clk) disable iff (!rstn_sync)
         load_en |-> (!sec_rollover && !min_rollover);
@@ -198,7 +202,7 @@ interface hms_timer_if (
     assert_load_over_rollover: assert property (p_load_over_rollover)
         else $error("[SVA FAIL] Rollover active during load_en commit!");
 
-    // A12: Output Switch Bypass Anti-Glitch Property
+    // A11: Output Switch Bypass Anti-Glitch Property
     property p_output_switch_bypass;
         @(posedge clk) disable iff (!rstn_sync)
         load_en |-> (s_out == adj_sec && m_out == adj_min && h_out == adj_hour);
@@ -206,7 +210,7 @@ interface hms_timer_if (
     assert_output_switch_bypass: assert property (p_output_switch_bypass)
         else $error("[SVA FAIL] Output switch did not retain edit buffer during commit load_en!");
 
-    // A13: Button Pulse Width Checks (Single Cycle Master Clock)
+    // A12: Button Pulse Width Checks (Single Cycle Master Clock)
     property p_sel_pulse_width;
         @(posedge clk) disable iff (!rstn_sync)
         sel_pulse |=> !sel_pulse;
@@ -227,5 +231,72 @@ interface hms_timer_if (
     endproperty
     assert_down_pulse_width: assert property (p_down_pulse_width)
         else $error("[SVA FAIL] down_pulse held active for more than 1 cycle!");
+
+    // A13: Real-Time Counter Hold Stability Properties
+    property p_second_counter_hold;
+        @(posedge clk) disable iff (!rstn_sync)
+        (!load_en && !sec_pulse) |=> (s_cnt == $past(s_cnt));
+    endproperty
+    assert_second_counter_hold: assert property (p_second_counter_hold)
+        else $error("[SVA FAIL] s_cnt changed without sec_pulse or load_en!");
+
+    property p_minute_counter_hold;
+        @(posedge clk) disable iff (!rstn_sync)
+        (!load_en && !sec_rollover) |=> (m_cnt == $past(m_cnt));
+    endproperty
+    assert_minute_counter_hold: assert property (p_minute_counter_hold)
+        else $error("[SVA FAIL] m_cnt changed without sec_rollover or load_en!");
+
+    property p_hour_counter_hold;
+        @(posedge clk) disable iff (!rstn_sync)
+        (!load_en && !min_rollover) |=> (h_cnt == $past(h_cnt));
+    endproperty
+    assert_hour_counter_hold: assert property (p_hour_counter_hold)
+        else $error("[SVA FAIL] h_cnt changed without min_rollover or load_en!");
+
+    // A14: Timeout Rollback Without Load_en Property
+    property p_timeout_no_load_en;
+        @(posedge clk) disable iff (!rstn_sync)
+        ($past(adj_mode) != 2'b00 && adj_mode == 2'b00 && !$past(sel_pulse)) |-> (!load_en);
+    endproperty
+    assert_timeout_no_load_en: assert property (p_timeout_no_load_en)
+        else $error("[SVA FAIL] load_en asserted during timeout rollback!");
+
+    // A15: Spurious Rollover Suppression Properties
+    property p_sec_spurious_suppress;
+        @(posedge clk) disable iff (!rstn_sync)
+        (s_cnt != 6'd59) |-> (!sec_rollover);
+    endproperty
+    assert_sec_spurious_suppress: assert property (p_sec_spurious_suppress)
+        else $error("[SVA FAIL] sec_rollover active when s_cnt != 59!");
+
+    property p_min_spurious_suppress;
+        @(posedge clk) disable iff (!rstn_sync)
+        (m_cnt != 6'd59) |-> (!min_rollover);
+    endproperty
+    assert_min_spurious_suppress: assert property (p_min_spurious_suppress)
+        else $error("[SVA FAIL] min_rollover active when m_cnt != 59!");
+
+    property p_load_suppresses_rollover;
+        @(posedge clk) disable iff (!rstn_sync)
+        load_en |-> (!sec_rollover && !min_rollover);
+    endproperty
+    assert_load_suppresses_rollover: assert property (p_load_suppresses_rollover)
+        else $error("[SVA FAIL] sec_rollover or min_rollover active when load_en = 1!");
+
+    // A16: Output Switch Normal vs Adjust Routing Properties
+    property p_output_switch_run;
+        @(posedge clk) disable iff (!rstn_sync)
+        (adj_mode == 2'b00 && !load_en) |-> (s_out == s_cnt && m_out == m_cnt && h_out == h_cnt);
+    endproperty
+    assert_output_switch_run: assert property (p_output_switch_run)
+        else $error("[SVA FAIL] Output switch mismatch in MODE_RUN!");
+
+    property p_output_switch_adj;
+        @(posedge clk) disable iff (!rstn_sync)
+        (adj_mode != 2'b00) |-> (s_out == adj_sec && m_out == adj_min && h_out == adj_hour);
+    endproperty
+    assert_output_switch_adj: assert property (p_output_switch_adj)
+        else $error("[SVA FAIL] Output switch mismatch in MODE_ADJ!");
 
 endinterface
