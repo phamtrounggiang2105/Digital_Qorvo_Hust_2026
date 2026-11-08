@@ -91,8 +91,6 @@ module button_debouncer #(
                     end
                 end
             end
-            else begin
-            end
         end
     end
 

@@ -164,4 +164,4 @@ Dưới đây là kết quả kiểm thử tự động thực tế từ bộ c�
 | **Statement Coverage** | >= 95.0% | 127 | 126 | 1 | **99.21%** |
 | **Branch Coverage** | >= 95.0% | 138 | 133 | 5 | **96.37%** |
 | **Expression Coverage** | Excluded | 11 | 8 | 3 | **72.72%** |
-| **Tổng thể Mã nguồn & Chức năng (Overall)** | >= 95.0% | - | - | - | **96.03% (SIGN-OFF READY)** |
+| **Tổng thể Mã nguồn & Chức năng (Overall)** | >= 95.0% | - | - | - | **96.03% ** |
